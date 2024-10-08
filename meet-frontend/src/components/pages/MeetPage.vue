@@ -8,7 +8,7 @@ interface Message {
 }
 
 const wsEventChatMSG: string = 'CHAT_MSG'
-// const wsEventChatInfo: string = 'CHAT_INFO'
+const wsEventChatInfo: string = 'CHAT_INFO'
 const wsEventWebRTC: string = 'WEBRTC_SIGNALING'
 
 const backendUrl: string = import.meta.env.VITE_APP_BACKEND_URL as string
@@ -26,7 +26,19 @@ const localStream = ref<MediaStream | null>(null)
 const remoteStream = ref<MediaStream | null>(null)
 const localVideo = ref<HTMLVideoElement | null>(null)
 const remoteVideo = ref<HTMLVideoElement | null>(null)
-const peerConnection = new RTCPeerConnection()
+const peerConnection = new RTCPeerConnection({
+  iceServers: [
+    {
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302',
+        'stun:stun3.l.google.com:19302',
+        'stun:stun4.l.google.com:19302'
+      ]
+    }
+  ]
+})
 
 onMounted(async () => {
   username.value = await getUsername()
@@ -85,6 +97,8 @@ function configWebSocket () {
         } else {
           appendChatMessage(jsonEventMsg.from, jsonEventMsg.message)
         }
+      } else if (jsonEventMsg.event === wsEventChatInfo) {
+        appendChatMessage(systemUser, jsonEventMsg.message)
       } else if (jsonEventMsg.event === wsEventWebRTC) {
         handleWebRTCSignalingData(jsonEventMsg.message)
       }
@@ -213,7 +227,7 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
             <!-- Chat Messages -->
             <div class="messages-box">
                 <div v-for="message in messages" :key="message.id" class="message"
-                    :class="{ 'user-message': message.user === meUser }">
+                    :class="{ 'user-message': message.user === meUser, 'system-message': message.user === systemUser }">
                     <strong>{{ message.user }}:</strong> {{ message.content }}
                 </div>
             </div>
@@ -268,6 +282,11 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
     align-self: flex-end;
 }
 
+.system-message {
+  background-color: #171658;
+  align-self: flex-end;
+}
+
 .input-box {
     display: flex;
     justify-content: space-between;
@@ -280,6 +299,8 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-right: 10px;
+    background-color: black;
+    color: white;
 }
 
 .send-button {
@@ -311,6 +332,7 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
 
 .video-box {
     width: 100%;
+    max-height: 400px;
     border: 1px solid #ddd;
     background-color: black;
 }

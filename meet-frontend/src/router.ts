@@ -37,7 +37,7 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/meet/',
+    path: '/m/',
     component: CleanTemplate,
     children: [
       {
