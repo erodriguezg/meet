@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meet-deployment
+  labels:
+    app: meet-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meet-app
+  template:
+    metadata:
+      labels:
+        app: meet-app
+    spec:
+      imagePullSecrets:
+        - name: nexusreg
+      containers:
+        - name: meet
+          image: IMAGE
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health-check
+              port: 3000
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health-check
+              port: 3000
+          envFrom:
+            - configMapRef:
+                name: meet-config-map
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meet-service
+  labels:
+    app: meet-app
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+  selector:
+    app: meet-app

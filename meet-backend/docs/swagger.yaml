@@ -1,0 +1,1705 @@
+basePath: /api
+definitions:
+  domain.FilterSearchModel:
+    properties:
+      cityName:
+        type: string
+      countryCode:
+        type: string
+      nickName:
+        type: string
+      zodiacSignCode:
+        type: string
+    type: object
+  domain.Model:
+    properties:
+      aboutMe:
+        type: string
+      city:
+        type: string
+      countryCode:
+        type: string
+      id:
+        type: string
+      nickName:
+        type: string
+      personId:
+        type: string
+      profileImageFileHash:
+        type: string
+      profileImageThumbnailFileHash:
+        type: string
+      zodiacSignCode:
+        type: string
+    type: object
+  domain.Person:
+    properties:
+      active:
+        type: boolean
+      birthday:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      profileCode:
+        type: integer
+    type: object
+  domain.Profile:
+    properties:
+      code:
+        type: integer
+      name:
+        type: string
+      permissionsCodes:
+        items:
+          type: integer
+        type: array
+    type: object
+  domain.SearchModelResponse:
+    properties:
+      models:
+        items:
+          $ref: '#/definitions/domain.Model'
+        type: array
+      totalCount:
+        type: integer
+    type: object
+  dto.ChiliBankAccountDTO:
+    properties:
+      accountNumber:
+        maximum: 30
+        type: integer
+      accountType:
+        maxLength: 50
+        type: string
+      bankName:
+        maxLength: 255
+        type: string
+      holderName:
+        maxLength: 255
+        type: string
+      id:
+        maxLength: 255
+        type: string
+      rut:
+        maximum: 10
+        type: integer
+    required:
+    - accountNumber
+    - accountType
+    - bankName
+    - holderName
+    - rut
+    type: object
+  dto.ModelRegisterDto:
+    properties:
+      nickName:
+        type: string
+      personId:
+        type: string
+    type: object
+  dto.PackBuyDetailDto:
+    properties:
+      modelNickName:
+        type: string
+      packDollarValue:
+        type: number
+      packTitle:
+        type: string
+    type: object
+  dto.PackDto:
+    properties:
+      coverImageFileHash:
+        type: string
+      isLocked:
+        type: boolean
+      packNumber:
+        type: integer
+      title:
+        type: string
+    type: object
+  dto.PackInfoDto:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.PackItemDto:
+    properties:
+      isLocked:
+        type: boolean
+      itemNumber:
+        type: integer
+      resourceFileHash:
+        type: string
+      thumbnailFileHash:
+        type: string
+      typeCode:
+        type: string
+    type: object
+  dto.PackPaymentMethodDTO:
+    properties:
+      chiliBankReceiptAccountId:
+        maxLength: 255
+        type: string
+      chiliBankReceiptCLPPrice:
+        minimum: 1
+        type: integer
+      chiliBankReceiptMethodEnabled:
+        type: boolean
+      paypalOnlineMethodEnabled:
+        type: boolean
+      paypalOnlineRecipientEmail:
+        type: string
+      paypalOnlineUSDPrice:
+        minimum: 1
+        type: number
+      paypalReceiptMethodEnabled:
+        type: boolean
+      paypalReceiptRecipientEmail:
+        type: string
+      paypalReceiptUSDPrice:
+        minimum: 1
+        type: number
+    required:
+    - chiliBankReceiptCLPPrice
+    - chiliBankReceiptMethodEnabled
+    - paypalOnlineMethodEnabled
+    - paypalOnlineUSDPrice
+    - paypalReceiptMethodEnabled
+    - paypalReceiptUSDPrice
+    type: object
+  dto.ResourceUploadUrlDto:
+    properties:
+      fileHash:
+        type: string
+      isBlurred:
+        type: boolean
+      isThumbnail:
+        type: boolean
+      uploadUrl:
+        type: string
+    type: object
+  fiberidentity.FiberIdentity:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      modelId:
+        type: string
+      modelNickName:
+        type: string
+      permissionsCodes:
+        items:
+          type: integer
+        type: array
+      personId:
+        type: string
+      profileCode:
+        type: integer
+      profileName:
+        type: string
+    type: object
+  handler.BuyPackCapturePaymentRequest:
+    properties:
+      orderId:
+        type: string
+    type: object
+  handler.BuyPackCreateOrderRequest:
+    properties:
+      modelNickName:
+        type: string
+      packNumber:
+        type: integer
+      personId:
+        type: string
+    type: object
+  handler.BuyPackCreateOrderResponse:
+    properties:
+      orderId:
+        type: string
+    type: object
+  handler.BuyPackDetailsRequest:
+    properties:
+      modelNickName:
+        type: string
+      packNumber:
+        type: integer
+    type: object
+  handler.EditPackDescriptionDto:
+    properties:
+      description:
+        maxLength: 280
+        type: string
+    type: object
+  handler.EditPackTitleDto:
+    properties:
+      title:
+        maxLength: 30
+        type: string
+    required:
+    - title
+    type: object
+  handler.PackDto:
+    properties:
+      modelNickName:
+        type: string
+      packNumber:
+        type: integer
+    type: object
+  handler.PrepareUploadPackItemDto:
+    properties:
+      isPublic:
+        type: boolean
+      modelNickName:
+        type: string
+      packNumber:
+        type: integer
+      typeCode:
+        type: string
+    type: object
+  rest.ApiErrorDetail:
+    properties:
+      code:
+        type: string
+      details:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+    type: object
+  rest.ApiResponse-array_domain_Person:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/domain.Person'
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-array_domain_Profile:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/domain.Profile'
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-array_dto_ChiliBankAccountDTO:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/dto.ChiliBankAccountDTO'
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-array_dto_PackDto:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/dto.PackDto'
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-array_dto_PackInfoDto:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/dto.PackInfoDto'
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-array_dto_PackItemDto:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/dto.PackItemDto'
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-array_dto_ResourceUploadUrlDto:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/dto.ResourceUploadUrlDto'
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-array_string:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          type: string
+        type: array
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-domain_Model:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        $ref: '#/definitions/domain.Model'
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-domain_Person:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        $ref: '#/definitions/domain.Person'
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-domain_SearchModelResponse:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        $ref: '#/definitions/domain.SearchModelResponse'
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-dto_ChiliBankAccountDTO:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        $ref: '#/definitions/dto.ChiliBankAccountDTO'
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-dto_PackDto:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        $ref: '#/definitions/dto.PackDto'
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-dto_PackPaymentMethodDTO:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        $ref: '#/definitions/dto.PackPaymentMethodDTO'
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-fiberidentity_FiberIdentity:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        $ref: '#/definitions/fiberidentity.FiberIdentity'
+      status:
+        type: string
+    type: object
+  rest.ApiResponse-string:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: Api for meet application.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: meet API
+  version: "1.0"
+paths:
+  /v1/buy-pack/capture-payment:
+    post:
+      consumes:
+      - application/json
+      description: Capture a Payment to a Pack
+      parameters:
+      - description: Capture Payment Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.BuyPackCapturePaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Capture Pack Payment
+      tags:
+      - BuyPack
+  /v1/buy-pack/create-order:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new order for buy a pack
+      parameters:
+      - description: Create Order Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.BuyPackCreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.BuyPackCreateOrderResponse'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create Buy Pack Order
+      tags:
+      - BuyPack
+  /v1/buy-pack/detail:
+    post:
+      consumes:
+      - application/json
+      description: Get info required for buy the pack
+      parameters:
+      - description: details buy pack dto
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.BuyPackDetailsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PackBuyDetailDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Buy Pack Details
+      tags:
+      - BuyPack
+  /v1/buy-pack/info:
+    get:
+      consumes:
+      - application/json
+      description: Get config client data for payment system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Payment Client Data
+      tags:
+      - BuyPack
+  /v1/chili-bank/{modelNickname}/{accountId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a chili bank account of the model
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickname
+        required: true
+        type: string
+      - description: chili bank account id
+        in: path
+        name: accountId
+        required: true
+        type: string
+      - description: The chili bank account data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChiliBankAccountDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete Model Account
+      tags:
+      - Chili Bank
+  /v1/chili-bank/{modelNickname}/accounts:
+    get:
+      consumes:
+      - application/json
+      description: Get Model Chili Banks Accounts
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickname
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_ChiliBankAccountDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Model Accounts
+      tags:
+      - Chili Bank
+    post:
+      consumes:
+      - application/json
+      description: Insert or update a chili bank account for the model
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickname
+        required: true
+        type: string
+      - description: The chili bank account data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChiliBankAccountDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-dto_ChiliBankAccountDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Save Model Account
+      tags:
+      - Chili Bank
+  /v1/chili-bank/account-types:
+    get:
+      consumes:
+      - application/json
+      description: Get accounts types for chili banks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Account Types
+      tags:
+      - Chili Bank
+  /v1/chili-bank/banks:
+    get:
+      consumes:
+      - application/json
+      description: Get Chili Banks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Banks
+      tags:
+      - Chili Bank
+  /v1/file/confirm/{hash}:
+    post:
+      consumes:
+      - application/json
+      description: Confirm the file was uploaded
+      parameters:
+      - description: unique hash for the file
+        in: path
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Confirm File Uploaded
+      tags:
+      - File
+  /v1/file/get/{hash}:
+    get:
+      consumes:
+      - application/json
+      description: Get the download url from hash
+      parameters:
+      - description: unique hash for the file
+        in: path
+        name: hash
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Download Url
+      tags:
+      - File
+  /v1/file/redirect/{hash}:
+    get:
+      consumes:
+      - application/json
+      description: Redirect for download the file
+      parameters:
+      - description: unique hash for the file
+        in: path
+        name: hash
+        required: true
+        type: string
+      responses:
+        "301":
+          description: Moved Permanently
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Redirect To File
+      tags:
+      - File
+  /v1/file/storage-type:
+    get:
+      consumes:
+      - application/json
+      description: Get the storage type
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Storage Type
+      tags:
+      - File
+  /v1/health-check:
+    get:
+      consumes:
+      - application/json
+      description: Health Check Api Method
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Health Check
+      tags:
+      - Health Check
+  /v1/model/{nickname}:
+    get:
+      consumes:
+      - application/json
+      description: Find a model by nickname and get public data
+      parameters:
+      - description: nickname of the model
+        in: path
+        name: nickname
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-domain_Model'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Find Model By NickName
+      tags:
+      - Model
+  /v1/model/{nickname}/prepare-profile-img:
+    post:
+      consumes:
+      - application/json
+      description: Prepare for upload profile image
+      parameters:
+      - description: nickname of the model
+        in: path
+        name: nickname
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_ResourceUploadUrlDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Prepare Upload Profile Image
+      tags:
+      - Model
+  /v1/model/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a Model
+      parameters:
+      - description: The registration data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ModelRegisterDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Register Model
+      tags:
+      - Model
+  /v1/model/search:
+    post:
+      consumes:
+      - application/json
+      description: Search Models by filters
+      parameters:
+      - description: first position page
+        in: query
+        name: first
+        required: true
+        type: string
+      - description: last position page
+        in: query
+        name: last
+        required: true
+        type: string
+      - description: filters for search
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/domain.FilterSearchModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-domain_SearchModelResponse'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Search Models
+      tags:
+      - Model
+  /v1/pack-payment-methods/{modelNickname}/{packNumber}:
+    get:
+      consumes:
+      - application/json
+      description: Gets the payments methods for one pack
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickname
+        required: true
+        type: string
+      - description: pack number
+        in: path
+        name: packNumber
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-dto_PackPaymentMethodDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Gets Pack Payment Methods
+      tags:
+      - Pack Payment Methods
+    post:
+      consumes:
+      - application/json
+      description: Insert or update the payment methods for one pack
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickname
+        required: true
+        type: string
+      - description: The payment methods data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PackPaymentMethodDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-dto_PackPaymentMethodDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Save Pack Payment Methods
+      tags:
+      - Pack Payment Methods
+  /v1/pack/{modelNickName}:
+    get:
+      consumes:
+      - application/json
+      description: Get all the packs from one model
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_PackDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Packs From Model
+      tags:
+      - Pack
+  /v1/pack/{modelNickName}/{packNumber}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete one pack
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickName
+        required: true
+        type: string
+      - description: pack number
+        in: path
+        name: packNumber
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete Pack
+      tags:
+      - Pack
+  /v1/pack/{modelNickName}/{packNumber}/{packItem}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a item of one Pack
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickName
+        required: true
+        type: string
+      - description: pack number
+        in: path
+        name: packNumber
+        required: true
+        type: integer
+      - description: item number on the pack
+        in: path
+        name: packItem
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete Pack Item
+      tags:
+      - Pack
+  /v1/pack/{modelNickName}/{packNumber}/description:
+    post:
+      consumes:
+      - application/json
+      description: Edit the pack description by the model or admin
+      parameters:
+      - description: Payload Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.EditPackDescriptionDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Edit Pack Description
+      tags:
+      - Pack
+  /v1/pack/{modelNickName}/{packNumber}/info:
+    get:
+      consumes:
+      - application/json
+      description: Get information about the pack
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickName
+        required: true
+        type: string
+      - description: pack number
+        in: path
+        name: packNumber
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_PackInfoDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Pack Info
+      tags:
+      - Pack
+  /v1/pack/{modelNickName}/{packNumber}/items:
+    get:
+      consumes:
+      - application/json
+      description: Get all active items from the pack
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickName
+        required: true
+        type: string
+      - description: pack number
+        in: path
+        name: packNumber
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_PackItemDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Items From Pack
+      tags:
+      - Pack
+  /v1/pack/{modelNickName}/{packNumber}/title:
+    post:
+      consumes:
+      - application/json
+      description: Edit the pack title by the model or admin
+      parameters:
+      - description: Payload Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.EditPackTitleDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Edit Pack Title
+      tags:
+      - Pack
+  /v1/pack/{modelNickName}/new:
+    put:
+      consumes:
+      - application/json
+      description: Create a new pack for model
+      parameters:
+      - description: model nickname
+        in: path
+        name: modelNickName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-dto_PackDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create New Pack
+      tags:
+      - Pack
+  /v1/pack/prepare-upload-item:
+    post:
+      consumes:
+      - application/json
+      description: Prepare the upload for an item of one pack
+      parameters:
+      - description: Payload Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.PrepareUploadPackItemDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_ResourceUploadUrlDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Prepare Upload Pack Item
+      tags:
+      - Pack
+  /v1/pack/publish:
+    post:
+      consumes:
+      - application/json
+      description: Publish the pack ready for consumers
+      parameters:
+      - description: Payload Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.PackDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Publish Pack
+      tags:
+      - Pack
+  /v1/pack/ready-to-publish:
+    post:
+      consumes:
+      - application/json
+      description: Ready to publish the pack for moderators / admin revision
+      parameters:
+      - description: Payload Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.PackDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Ready To Publish Pack
+      tags:
+      - Pack
+  /v1/person/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete one person by his uuid
+      parameters:
+      - description: id of person
+        in: path
+        name: uuid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete Person By Id
+      tags:
+      - Person
+    get:
+      consumes:
+      - application/json
+      description: Find person by uuid id
+      parameters:
+      - description: id of person
+        in: path
+        name: uuid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-domain_Person'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Find By Id
+      tags:
+      - Person
+  /v1/person/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all persons
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_domain_Person'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Find All Persons
+      tags:
+      - Person
+  /v1/person/filter:
+    get:
+      consumes:
+      - application/json
+      description: Search persons filtered
+      parameters:
+      - description: id of person
+        in: query
+        name: id
+        type: string
+      - description: rut of person
+        in: query
+        name: rut
+        type: string
+      - description: text search on names
+        in: query
+        name: nameLike
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_domain_Person'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Filter Persons
+      tags:
+      - Person
+  /v1/person/save:
+    post:
+      consumes:
+      - application/json
+      description: Insert or update a person
+      parameters:
+      - description: The input person
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-domain_Person'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Save Person
+      tags:
+      - Person
+  /v1/profile/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all profiles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_domain_Profile'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Find All Profiles
+      tags:
+      - Profile
+  /v1/security/identity:
+    get:
+      consumes:
+      - application/json
+      description: Get the authenticated identity
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-fiberidentity_FiberIdentity'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Identity
+      tags:
+      - Security
+  /v1/security/login-url:
+    get:
+      consumes:
+      - application/json
+      description: Get the login url of the sso
+      parameters:
+      - description: state from frontend
+        in: query
+        name: state
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Login Url
+      tags:
+      - Security
+  /v1/security/redirect-to-openid-login-url:
+    get:
+      consumes:
+      - application/json
+      description: Redirect To OpenId Login Url
+      parameters:
+      - description: state from frontend
+        in: query
+        name: state
+        type: string
+      responses:
+        "301":
+          description: Moved Permanently
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Redirect To Login
+      tags:
+      - Security
+  /v1/security/token:
+    post:
+      consumes:
+      - application/json
+      description: Get the token from OpenId Response Data
+      parameters:
+      - description: code from openid
+        in: query
+        name: code
+        type: string
+      - description: state from openid
+        in: query
+        name: state
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get Token
+      tags:
+      - Security
+swagger: "2.0"

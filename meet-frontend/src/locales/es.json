@@ -1,0 +1,172 @@
+{
+    "accept" : "Aceptar",
+    "active": "Activo",
+    "application": "Aplicación",
+    "birthday": "Fecha de nacimiento",
+    "cancel" : "Cancelar",
+    "confirm" : "Confirmación",
+    "country" : "País",
+    "createPerson" : "Crear Persona",
+    "delete" : "Eliminar",
+    "delete-confirm" : "¿Está seguro que desea eliminar el registro?",
+    "download": "Descargar",
+    "editPerson" : "Editar Persona",
+    "email" : "Correo electrónico",
+    "error" : "Error",
+    "error-detail" : "Ocurrió un error interno.",
+    "firstName": "Nombres",
+    "id" : "Id",
+    "lastName": "Apellidos",
+    "managePersons": "Gestionar Personas",
+    "manageRealProperties": "Gestionar Bienes Raices",
+    "modelNotFound": "Modelo no encontrada",
+    "newPerson" : "Nueva Persona",
+    "persons" : "Personas",
+    "profile" : "Perfil",
+    "realProperties" : "Bienes Raices",
+    "remove": "Quitar",
+    "rentPaymentVoucherDownload": "Descargar Comprobante de Arriendo",
+    "rentVoucher" : "Comprobante Arriendo",
+    "rut": "RUT",
+    "save": "Guardar",
+    "selectOne" : "Selecciona uno ...",
+    "success" : "Éxito",
+    "success-detail" : "Se ha actualizado un registro.",
+    "validation" : "Validación",
+    "primevue": {
+      "startsWith": "Empieza con",
+      "contains": "Contiene",
+      "notContains": "No contiene",
+      "endsWith": "Termina con",
+      "equals": "Igual",
+      "notEquals": "No igual",
+      "noFilter": "No filtro",
+      "lt": "Menor que",
+      "lte": "Menor o igual que",
+      "gt": "Mayor que",
+      "gte": "Mayor o igual que",
+      "dateIs": "La fecha es",
+      "dateIsNot": "La fecha no es",
+      "dateBefore": "La fecha es antes",
+      "dateAfter": "La fecha es despues",
+      "clear": "Limpiar",
+      "apply": "Aplicar",
+      "matchAll": "Coincidir todo",
+      "matchAny": "Coincidir cualquiera",
+      "addRule": "Agregar regla",
+      "removeRule": "Quitar regla",
+      "accept": "Sí",
+      "reject": "No",
+      "choose": "Seleccionar",
+      "upload": "Subir archivo",
+      "cancel": "Cancelar",
+      "dayNames": {
+        "sunday": {
+          "normal": "Domingo",
+          "short": "Dom",
+          "min": "Do"
+        },
+        "monday": {
+          "normal": "Lunes",
+          "short": "Lun",
+          "min": "Lu"
+        },
+        "tuesday": {
+          "normal": "Martes",
+          "short": "Mar",
+          "min": "Ma"
+        },
+        "wednesday": {
+          "normal": "Miercoles",
+          "short": "Mie",
+          "min": "Mi"
+        },
+        "thursday": {
+          "normal": "Jueves",
+          "short": "Jue",
+          "min": "Ju"
+        },
+        "friday": {
+          "normal": "Viernes",
+          "short": "Vie",
+          "min": "Vi"
+        },
+        "saturday": {
+          "normal": "Sabado",
+          "short": "Sab",
+          "min": "Sa"
+        }
+      },
+      "monthNames": {
+        "january": {
+          "normal": "Enero",
+          "short": "Ene"
+        },
+        "february": {
+          "normal": "Febrero",
+          "short": "Feb"
+        },
+        "march": {
+          "normal": "Marzo",
+          "short": "Mar"
+        },
+        "april": {
+          "normal": "Abril",
+          "short": "Abr"
+        },
+        "may": {
+          "normal": "Mayo",
+          "short": "May"
+        },
+        "june": {
+          "normal": "Junio",
+          "short": "Jun"
+        },
+        "july": {
+          "normal": "Julio",
+          "short": "Jul"
+        },
+        "august": {
+          "normal": "Agosto",
+          "short": "Ago"
+        },
+        "september": {
+          "normal": "Septiembre",
+          "short": "Sep"
+        },
+        "october": {
+          "normal": "Octubre",
+          "short": "Oct"
+        },
+        "november": {
+          "normal": "Noviembre",
+          "short": "Nov"
+        },
+        "december": {
+          "normal": "Diciembre",
+          "short": "Dec"
+        }
+      },
+      "today": "Hoy",
+      "weekHeader": "Smn",
+      "firstDayOfWeek": "0",
+      "dateFormat": "dd/mm/yy",
+      "weak": "Debil",
+      "medium": "Medio",
+      "strong": "Fuerte",
+      "passwordPrompt": "Ingresa contraseña",
+      "emptyFilterMessage": "No se encontraron resultados",
+      "emptyMessage": "No se encontraron resultados"
+    },
+    "validations": {
+      "email" : "No es un correo electrónico valido.",
+      "maxLength" : "Se permite un máximo de {max} caracteres.",
+      "minLength" : "Al menos debe contener {min} caracteres.",
+      "number": "No es un numero válido.",
+      "required" : "El campo es requerido.",
+      "rut": "No es un RUT valido."
+    },
+    "business-errors": {
+      "person-email-not-available" : "El correo electrónico '{email}' no se encuentra disponible. Por favor ingrese otro"
+    } 
+  }

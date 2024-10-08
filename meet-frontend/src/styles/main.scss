@@ -1,0 +1,80 @@
+@use './_vars' as vars;
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: vars.$colorGray;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+/* custom */
+
+.button-panel {
+
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    margin-left: 1rem;
+    margin-top: 1rem;
+  }
+
+}
+
+@media only screen and (min-width: vars.$desktop) {
+  .desktop {
+      display: block !important;
+  }
+
+  .mobile {
+      display: none !important;
+  }
+}
+
+// Specific styles for mobile devices
+@media only screen and (max-width: vars.$mobile) {
+  .mobile {
+      display: block !important;
+  }
+
+  .desktop {
+      display: none !important;
+  }
+}

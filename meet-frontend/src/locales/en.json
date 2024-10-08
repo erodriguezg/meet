@@ -1,0 +1,172 @@
+{
+    "accept" : "Accept",
+    "active": "Active",
+    "application": "Application",
+    "birthday": "Birthday",
+    "cancel" : "Cancel",
+    "confirm" : "Confirm",
+    "country" : "Country",
+    "createPerson" : "Create Person",
+    "delete" : "Delete",
+    "delete-confirm" : "Are you sure you want to delete the record?",
+    "download": "Download",
+    "editPerson" : "Edit Person",
+    "email" : "E-Mail",
+    "error" : "Error",
+    "error-detail" : "An internal error has occurred.",
+    "firstName": "First Name",
+    "id" : "Id",
+    "lastName": "Last Name",
+    "managePersons": "Manage Persons",
+    "manageRealProperties": "Manage Real Properties",
+    "modelNotFound": "Model not found",
+    "newPerson" : "New Person",
+    "persons" : "Persons",
+    "profile" : "Profile", 
+    "realProperties" : "Real properties",
+    "remove": "Remove",
+    "rentPaymentVoucherDownload": "Rent Payment Voucher Download",
+    "rentVoucher" : "Rent Voucher",
+    "rut": "RUT",
+    "save": "Save",
+    "selectOne" : "Select one ...",
+    "success" : "Success",
+    "success-details" : "A record has been updated.",
+    "validation" : "Validation",
+    "primevue": {
+      "startsWith": "Starts with",
+      "contains": "Contains",
+      "notContains": "Not contains",
+      "endsWith": "Ends with",
+      "equals": "Equals",
+      "notEquals": "Not equals",
+      "noFilter": "No Filter",
+      "lt": "Less than",
+      "lte": "Less than or equal to",
+      "gt": "Greater than",
+      "gte": "Greater than or equal to",
+      "dateIs": "Date is",
+      "dateIsNot": "Date is not",
+      "dateBefore": "Date is before",
+      "dateAfter": "Date is after",
+      "clear": "Clear",
+      "apply": "Apply",
+      "matchAll": "Match All",
+      "matchAny": "Match Any",
+      "addRule": "Add Rule",
+      "removeRule": "Remove Rule",
+      "accept": "Yes",
+      "reject": "No",
+      "choose": "Choose",
+      "upload": "Upload",
+      "cancel": "Cancel",
+      "dayNames": {
+        "sunday": {
+          "normal": "Sunday",
+          "short": "Sun",
+          "min": "Su"
+        },
+        "monday": {
+          "normal": "Monday",
+          "short": "Mon",
+          "min": "Mo"
+        },
+        "tuesday": {
+          "normal": "Tuesday",
+          "short": "Tue",
+          "min": "Tu"
+        },
+        "wednesday": {
+          "normal": "Wednesday",
+          "short": "Wed",
+          "min": "We"
+        },
+        "thursday": {
+          "normal": "Thursday",
+          "short": "Thu",
+          "min": "Th"
+        },
+        "friday": {
+          "normal": "Friday",
+          "short": "Fri",
+          "min": "Fr"
+        },
+        "saturday": {
+          "normal": "Saturday",
+          "short": "Sat",
+          "min": "Sa"
+        }
+      },
+      "monthNames": {
+        "january": {
+          "normal": "January",
+          "short": "Jan"
+        },
+        "february": {
+          "normal": "February",
+          "short": "Feb"
+        },
+        "march": {
+          "normal": "March",
+          "short": "Mar"
+        },
+        "april": {
+          "normal": "April",
+          "short": "Apr"
+        },
+        "may": {
+          "normal": "May",
+          "short": "May"
+        },
+        "june": {
+          "normal": "June",
+          "short": "Jun"
+        },
+        "july": {
+          "normal": "July",
+          "short": "Jul"
+        },
+        "august": {
+          "normal": "August",
+          "short": "Aug"
+        },
+        "september": {
+          "normal": "September",
+          "short": "Sept"
+        },
+        "october": {
+          "normal": "October",
+          "short": "Oct"
+        },
+        "november": {
+          "normal": "November",
+          "short": "Nov"
+        },
+        "december": {
+          "normal": "December",
+          "short": "Dec"
+        }
+      },
+      "today": "Today",
+      "weekHeader": "Wk",
+      "firstDayOfWeek": "0",
+      "dateFormat": "mm/dd/yy",
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong",
+      "passwordPrompt": "Enter a password",
+      "emptyFilterMessage": "No results found",
+      "emptyMessage": "No available options"
+    },
+    "validations": {
+      "email" : "Not a valid email address.",
+      "maxLength" : "The maximum length allowed is {max}",
+      "minLength" : "The minimum length allowed is {min}",
+      "number": "Not a Number.",
+      "required" : "The field {property} is required.",
+      "rut": "Not a valid RUT."
+    },
+    "business-errors": {
+      "person-email-not-available" : "The email '{email}' is not available. Please enter another one"
+    } 
+  }

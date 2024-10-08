@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: meet-config-map
+data:
+  # GENERAL
+  ENV: dev
+  DEFAULT_TIMEZONE: America/Santiago
+  # JWT 
+  SECURE_PASSPHRASE_JWT: nauseate95Defeat68Missiles
+  SECURE_PASSPHRASE_OPENID: Rename98Relate62Proteges
+  # MONGODB
+  MONGODB_URL: mongodb://root:mongopass@localhost:27017
+  MONGODB_DATABASE: meet
+  MONGODB_MIGRATIONS_ENABLED: true
+  MONGODB_MIGRATIONS_AUTOREPAIR: true
+  # FIBER 
+  FIBER_PORT: 3000
+  FIBER_CORS_ORIGINS: http://localhost:5173
+  # GOOGLE OPENID
+  GOOGLE_OPENID_CLIENT_ID: 
+  GOOGLE_OPENID_CLIENT_SECRET: 
+  GOOGLE_OPENID_REDIRECT_URL: http://localhost:5173/callback-login
+  # SWAGGER
+  SWAGGER_ENABLED: true
+  # DROPBOX
+  DROPBOX_APP_KEY: 
+  DROPBOX_APP_SECRET: 
+  DROPBOX_REFRESH_TOKEN:

@@ -1,0 +1,52 @@
+{
+  "name": "meet-frontend",
+  "private": true,
+  "version": "0.3.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@paypal/paypal-js": "^6.0.1",
+    "@primevue/themes": "^4.0.4",
+    "axios": "^1.7.3",
+    "js-cookie": "^3.0.5",
+    "pinia": "^2.2.1",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.53.0",
+    "quill": "^2.0.2",
+    "rut.js": "^2.1.0",
+    "tailwindcss-primeui": "^0.3.4",
+    "v-viewer": "^3.0.13",
+    "vee-validate": "^4.13.2",
+    "viewerjs": "^1.11.6",
+    "vue": "^3.4.37",
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.4.3",
+    "vue3-emoji-picker": "^1.1.8",
+    "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "@intlify/unplugin-vue-i18n": "^0.10.1",
+    "@types/js-cookie": "^3.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-vue": "^4.6.2",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-config-standard-with-typescript": "^34.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-promise": "^6.6.0",
+    "eslint-plugin-vue": "^9.27.0",
+    "postcss": "^8.4.41",
+    "sass": "^1.77.8",
+    "tailwindcss": "^3.4.9",
+    "typescript": "^5.5.4",
+    "vite": "^4.5.3",
+    "vue-tsc": "^2.0.29"
+  }
+}

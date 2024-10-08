@@ -1,0 +1,34 @@
+FROM alpine:3.18 as alpine
+
+RUN apk add -U --no-cache ca-certificates tzdata
+
+ENV USER=appuser
+ENV UID=10001
+
+RUN mkdir /tmpfiles
+
+RUN adduser \
+    -D \
+    -g "" \
+    -s "/sbin/nologin" \
+    -H \
+    -u "${UID}" \
+    "${USER}"
+
+FROM scratch
+COPY ./meet-backend/bin/api .
+COPY ./meet-backend/migrations ./migrations 
+COPY ./meet-backend/docs ./docs
+COPY ./meet-frontend/dist ./public
+COPY --from=alpine /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=alpine /etc/passwd /etc/passwd
+COPY --from=alpine /etc/group /etc/group
+COPY --from=alpine --chown=appuser:appuser /tmpfiles /tmpfiles
+
+USER appuser:appuser
+
+EXPOSE 3000
+
+CMD ["./api"]
+

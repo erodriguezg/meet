@@ -1,0 +1,23 @@
+.p-component {
+
+
+    &.p-dataview-grid {
+        .p-dataview-content {
+            background: none;
+        }
+
+        .p-paginator {
+            background: none;
+            
+
+            .p-paginator-page {
+                color: orange;
+                background: none;
+                font-size: bold;
+            }
+        }
+
+    }
+
+
+}
