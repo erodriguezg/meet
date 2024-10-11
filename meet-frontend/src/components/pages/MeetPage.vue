@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { GeneralUtils } from '../../utils/GeneralUtils'
 
 interface Message {
     id: number
@@ -11,7 +12,7 @@ const wsEventChatMSG: string = 'CHAT_MSG'
 const wsEventChatInfo: string = 'CHAT_INFO'
 const wsEventWebRTC: string = 'WEBRTC_SIGNALING'
 
-const backendUrl: string = import.meta.env.VITE_APP_BACKEND_URL as string
+const backendUrl: string = GeneralUtils.getWebSocketBaseUrl()
 const systemUser: string = 'System'
 const meUser: string = 'Me'
 

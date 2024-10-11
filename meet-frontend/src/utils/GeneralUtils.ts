@@ -1,4 +1,6 @@
 
+const backendUrl: string = import.meta.env.VITE_APP_BACKEND_URL as string
+
 const clearBlankOrNull = (input: any): any | undefined => {
   if (input === undefined || input === null) {
     return undefined
@@ -28,10 +30,19 @@ const stringsArrayToSelectItemArray = (inputArray: string[]): SelectItem[] => {
   })
 }
 
+const getWebSocketBaseUrl = (): string => {
+  if (backendUrl === '/') {
+    return `${window.location.protocol}//${window.location.hostname}`
+  } else {
+    return backendUrl
+  }
+}
+
 export const GeneralUtils = {
   clearBlankOrNull,
   clearNull,
-  stringsArrayToSelectItemArray
+  stringsArrayToSelectItemArray,
+  getWebSocketBaseUrl
 }
 
 export interface SelectItem {
