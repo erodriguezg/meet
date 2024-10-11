@@ -5,7 +5,7 @@ import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Fieldset from 'primevue/fieldset'
-import PaymentPackDefinitionChiliBank from './PaymentPackDefinitionChiliBank.vue'
+// import PaymentPackDefinitionChiliBank from './PaymentPackDefinitionChiliBank.vue'
 import { onMounted, ref } from 'vue'
 import { useModelDetailStore } from '../../stores/ModelDetailStore'
 import { PackPaymentMethodsApi } from '../../api/PackPaymentMethodsApi'
@@ -74,7 +74,7 @@ defineExpose({
                 <template #content v-if="packPaymentMethods?.chiliBankReceiptMethodEnabled">
                     <Fieldset legend="Cuenta Destino">
                         <Suspense>
-                            <PaymentPackDefinitionChiliBank :modelNickname="modelNickname" v-model:chiliBankAccountId="packPaymentMethods.chiliBankReceiptAccountId"/>
+                            <!-- PaymentPackDefinitionChiliBank :modelNickname="modelNickname" v-model:chiliBankAccountId="packPaymentMethods.chiliBankReceiptAccountId" -->
                         </Suspense>
                     </Fieldset>
                     <Fieldset legend="Precio Pack">

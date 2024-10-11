@@ -75,7 +75,7 @@ onMounted(async () => {
 })
 
 const back = () => {
-  router.push({ name: RoutesNames.MODEL_PACKS_PAGE })
+  router.push({ name: RoutesNames.HOME_PAGE })
 }
 
 const openModalAdd = () => {

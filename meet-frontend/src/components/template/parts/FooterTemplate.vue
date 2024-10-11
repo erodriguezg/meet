@@ -5,7 +5,7 @@ import { AuthService, Permission } from '../../../services/AuthService'
 
 const seeModelRegisterLink = ref<boolean>(true)
 
-seeModelRegisterLink.value = AuthService.hasPermission(Permission.REGISTER_MODEL)
+seeModelRegisterLink.value = AuthService.hasPermission(Permission.MANAGE)
 
 </script>
 
@@ -13,7 +13,7 @@ seeModelRegisterLink.value = AuthService.hasPermission(Permission.REGISTER_MODEL
     <div class="footerTemplate">
         <p>version: 0.4.0</p>
         <div v-if="seeModelRegisterLink">
-            <RouterLink :to="{name: RoutesNames.MODEL_REGISTER_PAGE}"  >registro de modelo</RouterLink>
+            <RouterLink :to="{name: RoutesNames.NEW_PUBLICATION_PAGE}"  >registro de modelo</RouterLink>
         </div>
     </div>
 </template>

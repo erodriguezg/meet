@@ -30,7 +30,7 @@ onMounted(async () => {
 
 const goToPack = (packNumber: number) => {
   router.push({
-    name: RoutesNames.MODEL_PACK_PAGE,
+    name: RoutesNames.HOME_PAGE,
     params: {
       packNumber
     }

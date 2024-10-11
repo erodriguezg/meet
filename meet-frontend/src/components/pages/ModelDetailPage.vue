@@ -36,7 +36,7 @@ onMounted(async () => {
     modelDetailStore.setModelDetail({
       modelNickName: modelData.value.nickName,
       isSameModel: modelData.value.nickName === AuthService.getIdentity()?.modelNickName,
-      havePermissionEditAllModels: AuthService.hasPermission(Permission.EDIT_ALL_MODELS)
+      havePermissionEditAllModels: AuthService.hasPermission(Permission.MANAGE)
     })
   }
 })
