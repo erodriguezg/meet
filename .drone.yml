@@ -1,0 +1,112 @@
+kind: pipeline
+type: docker
+name: meet
+
+steps:
+
+  - name: build-frontend
+    image: node:18.16-slim
+    volumes:
+      - name: nodedist
+        path: /meet-frontend/dist
+    environment:
+      VITE_APP_BACKEND_URL: "/"
+    commands: 
+      - cd meet-frontend
+      - npm i
+      - rm -rf dist/
+      - npm run build
+
+  - name: build-backend
+    image: golangci/golangci-lint:v1.55
+    volumes:
+      - name: backenddist
+        path: /meet-backend/bin
+    environment:
+      CGO_ENABLED: "0"
+      GO111MODULE: "on"
+      GOOS: "linux"
+      GOARCH: "amd64"
+      GOPRIVATE: "github.com/erodriguezg"
+    commands:
+      - cd meet-backend
+      - go mod download
+      - golangci-lint run -v --timeout 7m
+      - go vet ./...
+      - curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.18.2
+      - gosec -exclude=G101 ./...
+      - go test ./... --coverprofile=coverage.out
+      - go build -ldflags="-w -s" -o bin/api ./cmd/server/api.go
+
+  - name: build-container-image
+    image: plugins/docker
+    settings:
+      registry: 
+        from_secret: DOCKER_REGISTRY_NAME
+      username: 
+        from_secret: DOCKER_REGISTRY_USERNAME
+      password: 
+        from_secret: DOCKER_REGISTRY_PASSWORD
+      repo: 
+        from_secret: DOCKER_REGISTRY_REPO_IMAGE
+      tags:
+        - ${DRONE_BRANCH}
+      dockerfile: docker/DockerfileCiCd
+    when:
+      branch:
+        - dev1
+        - dev2
+        - staging
+        - release
+    depends_on:
+      - build-frontend
+      - build-backend
+  
+  - name: deploy-k8s-dev
+    image: erodriguezg/kubectl:1.19.5
+    environment:
+      K8S_KUBECONFIG_FILE:
+        from_secret: K8S_KUBECONFIG_FILE_DEV
+      DOCKER_REGISTRY_REPO_IMAGE:
+        from_secret: DOCKER_REGISTRY_REPO_IMAGE
+    commands:
+      - mkdir -p /root/.kube/
+      - echo "$K8S_KUBECONFIG_FILE" > /root/.kube/config
+      - IMAGE=$DOCKER_REGISTRY_REPO_IMAGE:${DRONE_BRANCH}
+      - sed -i "s,IMAGE,$IMAGE," "k8s/templates/deployment.yml"
+      - kubectl apply -f k8s/templates/deployment.yml -n meet-${DRONE_BRANCH}
+      - kubectl rollout restart deployment meet-deployment -n meet-${DRONE_BRANCH}
+    when:
+      branch:
+        - dev1
+        - dev2
+        - staging
+    depends_on:
+      - build-container-image
+
+  - name: deploy-k8s-release
+    image: erodriguezg/kubectl:1.19.5
+    environment:
+      K8S_KUBECONFIG_FILE:
+        from_secret: K8S_KUBECONFIG_FILE_RELEASE
+      DOCKER_REGISTRY_REPO_IMAGE:
+        from_secret: DOCKER_REGISTRY_REPO_IMAGE
+    commands:
+      - mkdir -p /root/.kube/
+      - echo "$K8S_KUBECONFIG_FILE" > /root/.kube/config
+      - IMAGE=$DOCKER_REGISTRY_REPO_IMAGE:${DRONE_BRANCH}
+      - sed -i "s,IMAGE,$IMAGE," "k8s/templates/deployment.yml"
+      - kubectl apply -f k8s/templates/deployment.yml -n meet
+      - kubectl rollout restart deployment meet-deployment -n meet
+    when:
+      branch:
+        - release
+    depends_on:
+      - build-container-image
+
+volumes:
+  - name: nodedist
+    temp: {}
+  - name: backenddist
+    temp: {}
+
