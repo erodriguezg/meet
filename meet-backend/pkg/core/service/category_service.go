@@ -84,8 +84,9 @@ func (port *categoryServiceImpl) GetAllTree() ([]dto.CategoryDTO, error) {
 
 	dtoMap := make(map[string]*dto.CategoryDTO)
 	for _, category := range categories {
+		currentCategory := category
 		var dto dto.CategoryDTO
-		err = dto.FromDomain(&category)
+		err = dto.FromDomain(&currentCategory)
 		if err != nil {
 			return nil, err
 		}
