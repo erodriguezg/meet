@@ -14,36 +14,47 @@ const MeetPage = (): any => import('./components/pages/MeetPage.vue')
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: MainTemplate,
+    component: CleanTemplate,
     children: [
-      { name: RoutesNames.HOME_PAGE, path: '', component: HomePage },
       {
-        name: RoutesNames.ADMINISTRATION_CATEGORIES,
-        path: 'admin/categories',
-        component: CategoriesPage,
-        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.MANAGE)
-      },
-      {
-        name: RoutesNames.NEW_PUBLICATION_PAGE,
-        path: 'publication/new',
-        component: EditPublicationPage,
-        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.PUBLISH)
+        name: RoutesNames.HOME_PAGE,
+        path: '',
+        component: HomePage
       },
       {
         name: RoutesNames.MEET_PAGE,
-        path: 'meet/:room_id',
+        path: 'm/:roomId',
         component: MeetPage
       }
     ]
   },
   {
-    path: '/m/',
-    component: CleanTemplate,
+    path: '/admin',
+    component: MainTemplate,
     children: [
       {
-        name: RoutesNames.MEET_PAGE,
-        path: ':room_id',
-        component: MeetPage
+        name: RoutesNames.ADMINISTRATION_CATEGORIES,
+        path: 'categories',
+        component: CategoriesPage,
+        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.MANAGE)
+      },
+      {
+        name: RoutesNames.NEW_PUBLICATION_PAGE,
+        path: '/publication/new',
+        component: EditPublicationPage,
+        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.PUBLISH)
+      }
+    ]
+  },
+  {
+    path: '/publication',
+    component: MainTemplate,
+    children: [
+      {
+        name: RoutesNames.NEW_PUBLICATION_PAGE,
+        path: '/new',
+        component: EditPublicationPage,
+        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.PUBLISH)
       }
     ]
   },

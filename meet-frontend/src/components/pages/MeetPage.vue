@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { GeneralUtils } from '../../utils/GeneralUtils'
+import { useRoute } from 'vue-router'
 
 interface Message {
     id: number
     user: string
     content: string
 }
+
+const route = useRoute()
+
+const roomId: string = route.params.roomId as string
+const userQueryParam = route.query.user as string | undefined
 
 const wsEventChatMSG: string = 'CHAT_MSG'
 const wsEventChatInfo: string = 'CHAT_INFO'
@@ -42,6 +48,7 @@ const peerConnection = new RTCPeerConnection({
 })
 
 onMounted(async () => {
+  console.log(`room: ${roomId}`)
   username.value = await getUsername()
   await setupLocalMedia()
   configWebSocket()
@@ -72,11 +79,15 @@ function startWebRTCSocket () {
 
 function getUsername (): Promise<string> {
   return new Promise((resolve, reject) => {
-    const usernamePrompt = prompt('username?') ?? ''
-    if (usernamePrompt) {
-      resolve(usernamePrompt)
+    if (userQueryParam) {
+      resolve(userQueryParam)
     } else {
-      reject(new Error('error getting username'))
+      const usernamePrompt = prompt('username?') ?? ''
+      if (usernamePrompt) {
+        resolve(usernamePrompt)
+      } else {
+        reject(new Error('error getting username'))
+      }
     }
   })
 }
