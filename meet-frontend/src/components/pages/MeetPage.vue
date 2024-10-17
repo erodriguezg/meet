@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch, nextTick } from 'vue'
 import { GeneralUtils } from '../../utils/GeneralUtils'
 import { useRoute } from 'vue-router'
+import Button from 'primevue/button'
 
 interface Message {
-    id: number
-    user: string
-    content: string
+  id: number
+  user: string
+  content: string
 }
 
 const route = useRoute()
@@ -47,6 +48,11 @@ const peerConnection = new RTCPeerConnection({
   ]
 })
 
+const isRemoteLoading = ref(false)
+const mediaType = ref<'video' | 'audio' | 'both' | 'none'>('none')
+const isTransmitting = ref(false)
+let pendingCandidates: RTCIceCandidate[] = []
+
 onMounted(async () => {
   console.log(`room: ${roomId}`)
   username.value = await getUsername()
@@ -57,15 +63,55 @@ onMounted(async () => {
   peerConnection.ontrack = (event) => {
     if (!remoteStream.value) {
       remoteStream.value = new MediaStream()
-      if (remoteVideo.value) {
-        remoteVideo.value.srcObject = remoteStream.value
+    }
+    // Agregar las pistas remotas al stream remoto
+    event.streams[0].getTracks().forEach(track => remoteStream.value?.addTrack(track))
+    // Una vez que llega una pista remota, ocultamos el estado de loading
+    isRemoteLoading.value = false
+  }
+
+  peerConnection.onicecandidate = (event) => {
+    if (event.candidate) {
+      if (peerConnection.signalingState === 'stable') {
+        sendWebRTCSignalingMessage({
+          event: wsEventWebRTC,
+          data: {
+            type: 'candidate',
+            candidate: event.candidate
+          }
+        })
+      } else {
+      // Guarda candidatos para agregarlos cuando el estado sea estable
+        pendingCandidates.push(event.candidate)
       }
     }
-    event.streams[0].getTracks().forEach(track => remoteStream.value?.addTrack(track))
+  }
+
+  // Agregar los candidatos ICE cuando el estado de la conexión sea estable
+  peerConnection.oniceconnectionstatechange = () => {
+    if (peerConnection.iceConnectionState === 'connected' || peerConnection.iceConnectionState === 'completed') {
+      pendingCandidates.forEach(candidate => {
+        peerConnection.addIceCandidate(candidate)
+      })
+      pendingCandidates = [] // Limpiar la lista de candidatos pendientes
+    }
   }
 
   startWebRTCSocket()
 })
+
+watch(remoteStream, async newValue => {
+  await nextTick()
+  if (newValue && remoteVideo.value) {
+    remoteVideo.value!.srcObject = newValue
+  }
+})
+
+async function startTransmission () {
+  await setupLocalMedia()
+  startWebRTCSocket()
+  isTransmitting.value = true
+}
 
 function startWebRTCSocket () {
   setTimeout(async () => {
@@ -123,11 +169,22 @@ function configWebSocket () {
 // Configuración de los medios locales (video y audio)
 async function setupLocalMedia () {
   try {
-    localStream.value = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    let mediaConstraints: MediaStreamConstraints = {}
+
+    if (mediaType.value === 'video') {
+      mediaConstraints = { video: true, audio: false }
+    } else if (mediaType.value === 'audio') {
+      mediaConstraints = { video: false, audio: true }
+    } else if (mediaType.value === 'both') {
+      mediaConstraints = { video: true, audio: true }
+    } else {
+      mediaConstraints = { video: false, audio: false }
+    }
+
+    localStream.value = await navigator.mediaDevices.getUserMedia(mediaConstraints)
     if (localVideo.value && localStream.value) {
       localVideo.value.srcObject = localStream.value
     }
-    // Agregar las pistas locales a la conexión WebRTC
     localStream.value?.getTracks().forEach(track => peerConnection.addTrack(track, localStream.value!))
   } catch (error) {
     console.error('Error al obtener medios locales:', error)
@@ -138,16 +195,55 @@ async function setupLocalMedia () {
 function handleWebRTCSignalingData (data: any) {
   switch (data.type) {
     case 'offer':
+      // Al recibir una oferta, establecer la descripción remota y crear una respuesta
       peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer))
-      createAndSendAnswer()
+        .then(() => {
+          console.log('Remote description set for offer')
+          return peerConnection.createAnswer()
+        })
+        .then((answer) => {
+          return peerConnection.setLocalDescription(answer)
+        })
+        .then(() => {
+          sendWebRTCSignalingMessage({
+            event: wsEventWebRTC,
+            data: {
+              type: 'answer',
+              answer: peerConnection.localDescription
+            }
+          })
+        })
+        .catch(error => console.error('Error handling offer:', error))
       break
+
     case 'answer':
+      // Al recibir una respuesta, establecer la descripción remota
       peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer))
+        .then(() => {
+          console.log('Remote description set for answer')
+        })
+        .catch(error => console.error('Error setting remote description for answer:', error))
       break
-    case 'candidate':
-      peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate))
+
+    case 'candidate': {
+      // Agregar candidato ICE solo si el estado de la señalización es estable
+      const candidate = new RTCIceCandidate(data.candidate)
+      if (peerConnection.signalingState === 'stable') {
+        peerConnection.addIceCandidate(candidate)
+          .then(() => {
+            console.log('ICE candidate added')
+          })
+          .catch(error => console.error('Error adding ICE candidate:', error))
+      } else {
+        // Si la señalización no está estable, guardar el candidato en la lista pendiente
+        pendingCandidates.push(candidate)
+        console.log('ICE candidate stored, will be added later')
+      }
       break
+    }
+
     default:
+      console.warn('Unknown signaling data type:', data.type)
       break
   }
 }
@@ -196,6 +292,12 @@ peerConnection.onicecandidate = (event) => {
   }
 }
 
+async function sendOfferIfConnected () {
+  if (isTransmitting.value && peerConnection.signalingState !== 'closed') {
+    await createAndSendOffer()
+  }
+}
+
 // Función para enviar el mensaje
 function sendMessage () {
   if (newMessage.value.trim() !== '') {
@@ -204,8 +306,8 @@ function sendMessage () {
       event: wsEventChatMSG,
       data: newMessage.value.trim()
     }
-        conn!.send(JSON.stringify(wsMsg))
-        newMessage.value = ''
+    conn!.send(JSON.stringify(wsMsg))
+    newMessage.value = ''
   }
 }
 
@@ -219,79 +321,90 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
 </script>
 
 <template>
-    <div class="meet-page chat-video-container">
+  <div class="meet-page chat-video-container">
 
-        <!-- Conference Section -->
-        <div class="conference-section">
-            <div class="video-container">
-                <video ref="localVideo" autoplay playsinline class="video-box"></video>
-                <p>Tu video</p>
-            </div>
-            <div class="video-container">
-                <video ref="remoteVideo" autoplay playsinline class="video-box"></video>
-                <p>Video remoto</p>
-            </div>
-        </div>
-
-        <!-- Chat Section -->
-        <div class="chat-section">
-
-            <!-- Chat Messages -->
-            <div class="messages-box">
-                <div v-for="message in messages" :key="message.id" class="message"
-                    :class="{ 'user-message': message.user === meUser, 'system-message': message.user === systemUser }">
-                    <strong>{{ message.user }}:</strong> {{ message.content }}
-                </div>
-            </div>
-
-            <!-- Input Box -->
-            <div class="input-box">
-                <input v-model="newMessage" @keyup.enter="sendMessage" type="text" placeholder="Type a message..."
-                    class="message-input" />
-                <button v-if="conn" @click="sendMessage" class="send-button">Send</button>
-            </div>
-        </div>
-
+    <div class="controls">
+      <label for="mediaType">Seleccionar qué transmitir:</label>
+      <select v-model="mediaType" id="mediaType">
+        <option value="video">Solo video</option>
+        <option value="audio">Solo audio</option>
+        <option value="both">Video y audio</option>
+      </select>
+      <Button @click="startTransmission" v-if="!isTransmitting">Iniciar transmisión</Button>
     </div>
+
+    <!-- Conference Section -->
+    <div class="conference-section">
+      <div class="video-container">
+        <video ref="localVideo" autoplay playsinline class="video-box"></video>
+        <p>Tu video</p>
+      </div>
+      <div class="video-container">
+        <div v-if="isRemoteLoading" class="spinner"></div>
+        <video v-else ref="remoteVideo" autoplay playsinline class="video-box"></video>
+        <p>Video remoto</p>
+      </div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+
+      <!-- Chat Messages -->
+      <div class="messages-box">
+        <div v-for="message in messages" :key="message.id" class="message"
+          :class="{ 'user-message': message.user === meUser, 'system-message': message.user === systemUser }">
+          <strong>{{ message.user }}:</strong> {{ message.content }}
+        </div>
+      </div>
+
+      <!-- Input Box -->
+      <div class="input-box">
+        <input v-model="newMessage" @keyup.enter="sendMessage" type="text" placeholder="Type a message..."
+          class="message-input" />
+        <button v-if="conn" @click="sendMessage" class="send-button">Send</button>
+      </div>
+    </div>
+
+  </div>
 </template>
 
 <style lang="scss" scoped>
 /* Layout de dos columnas */
 .chat-video-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    max-width: 1200px;
-    border: 1px solid #ddd;
-    margin: 1rem auto;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 1200px;
+  border: 1px solid #ddd;
+  margin: 1rem auto;
 }
 
 /* Columna de chat (izquierda) */
 .chat-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid #ddd;
-    padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #ddd;
+  padding: 10px;
 }
 
 .messages-box {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 10px;
-    border-bottom: 1px solid #dddddd;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  border-bottom: 1px solid #dddddd;
 }
 
 .message {
-    padding: 8px;
-    margin-bottom: 5px;
-    background-color: #4c4e02;
-    border-radius: 5px;
+  padding: 8px;
+  margin-bottom: 5px;
+  background-color: #4c4e02;
+  border-radius: 5px;
 }
 
 .user-message {
-    background-color: #033400;
-    align-self: flex-end;
+  background-color: #033400;
+  align-self: flex-end;
 }
 
 .system-message {
@@ -300,82 +413,114 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
 }
 
 .input-box {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
 }
 
 .message-input {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-right: 10px;
-    background-color: black;
-    color: white;
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+  background-color: black;
+  color: white;
 }
 
 .send-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .send-button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 /* Columna de video (derecha) */
 .conference-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
 }
 
 .video-container {
-    flex: 1;
-    text-align: center;
+  flex: 1;
+  text-align: center;
 }
 
 .video-box {
-    width: 100%;
-    max-height: 400px;
-    border: 1px solid #ddd;
-    background-color: black;
+  width: 100%;
+  max-height: 400px;
+  border: 1px solid #ddd;
+  background-color: black;
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+.controls select,
+.controls button {
+  margin-right: 10px;
+  padding: 10px;
+}
+
+.spinner {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  margin: 0 auto;
+}
+
+/* Animación del spinner */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Media Queries para diseño responsivo */
 @media (max-width: 768px) {
-    .chat-video-container {
-        flex-direction: column;
-    }
+  .chat-video-container {
+    flex-direction: column;
+  }
 
-    .conference-section {
-        flex-direction: row;
-        justify-content: space-between;
-    }
+  .conference-section {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
-    .video-box {
-        height: 150px;
-    }
+  .video-box {
+    height: 150px;
+  }
 }
 
 @media (max-width: 480px) {
-    .video-box {
-        height: 120px;
-    }
+  .video-box {
+    height: 120px;
+  }
 
-    .message-input {
-        padding: 8px;
-    }
+  .message-input {
+    padding: 8px;
+  }
 
-    .send-button {
-        padding: 8px 12px;
-    }
+  .send-button {
+    padding: 8px 12px;
+  }
 }
 </style>
