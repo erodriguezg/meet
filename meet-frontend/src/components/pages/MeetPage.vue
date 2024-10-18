@@ -288,11 +288,11 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
     <!-- Conference Section -->
     <div class="conference-section">
       <div class="video-container">
-        <video ref="localVideo" autoplay playsinline class="video-box"></video>
+        <video ref="localVideo" muted autoplay playsinline class="video-box"></video>
         <p>Tu video</p>
       </div>
       <div class="video-container">
-        <video ref="remoteVideo" autoplay playsinline class="video-box"></video>
+        <video ref="remoteVideo" muted autoplay playsinline class="video-box"></video>
         <p>Video remoto</p>
       </div>
     </div>
