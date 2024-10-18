@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, nextTick } from 'vue'
+import { onMounted, ref } from 'vue'
 import { GeneralUtils } from '../../utils/GeneralUtils'
 import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
@@ -48,15 +48,12 @@ const peerConnection = new RTCPeerConnection({
   ]
 })
 
-const isRemoteLoading = ref(false)
 const mediaType = ref<'video' | 'audio' | 'both' | 'none'>('none')
 const isTransmitting = ref(false)
-let pendingCandidates: RTCIceCandidate[] = []
 
 onMounted(async () => {
   console.log(`room: ${roomId}`)
   username.value = await getUsername()
-  await setupLocalMedia()
   configWebSocket()
 
   // Configuración del stream remoto
@@ -64,46 +61,11 @@ onMounted(async () => {
     if (!remoteStream.value) {
       remoteStream.value = new MediaStream()
     }
+    if (remoteVideo.value) {
+      remoteVideo.value.srcObject = remoteStream.value
+    }
     // Agregar las pistas remotas al stream remoto
     event.streams[0].getTracks().forEach(track => remoteStream.value?.addTrack(track))
-    // Una vez que llega una pista remota, ocultamos el estado de loading
-    isRemoteLoading.value = false
-  }
-
-  peerConnection.onicecandidate = (event) => {
-    if (event.candidate) {
-      if (peerConnection.signalingState === 'stable') {
-        sendWebRTCSignalingMessage({
-          event: wsEventWebRTC,
-          data: {
-            type: 'candidate',
-            candidate: event.candidate
-          }
-        })
-      } else {
-      // Guarda candidatos para agregarlos cuando el estado sea estable
-        pendingCandidates.push(event.candidate)
-      }
-    }
-  }
-
-  // Agregar los candidatos ICE cuando el estado de la conexión sea estable
-  peerConnection.oniceconnectionstatechange = () => {
-    if (peerConnection.iceConnectionState === 'connected' || peerConnection.iceConnectionState === 'completed') {
-      pendingCandidates.forEach(candidate => {
-        peerConnection.addIceCandidate(candidate)
-      })
-      pendingCandidates = [] // Limpiar la lista de candidatos pendientes
-    }
-  }
-
-  startWebRTCSocket()
-})
-
-watch(remoteStream, async newValue => {
-  await nextTick()
-  if (newValue && remoteVideo.value) {
-    remoteVideo.value!.srcObject = newValue
   }
 })
 
@@ -147,7 +109,7 @@ function configWebSocket () {
       appendChatMessage(systemUser, 'Connection closed')
     }
 
-    conn.onmessage = function (message) {
+    conn.onmessage = async function (message) {
       const jsonEventMsg = JSON.parse(message.data)
       if (jsonEventMsg.event === wsEventChatMSG) {
         if (jsonEventMsg.from === username.value) {
@@ -157,8 +119,9 @@ function configWebSocket () {
         }
       } else if (jsonEventMsg.event === wsEventChatInfo) {
         appendChatMessage(systemUser, jsonEventMsg.message)
+        setTimeout(sendOfferIfConnected, 1000)
       } else if (jsonEventMsg.event === wsEventWebRTC) {
-        handleWebRTCSignalingData(jsonEventMsg.message)
+        await handleWebRTCSignalingData(jsonEventMsg.message)
       }
     }
   } else {
@@ -192,91 +155,44 @@ async function setupLocalMedia () {
 }
 
 // Función para manejar WebSocket
-function handleWebRTCSignalingData (data: any) {
+async function handleWebRTCSignalingData (data: any) {
   switch (data.type) {
     case 'offer':
       // Al recibir una oferta, establecer la descripción remota y crear una respuesta
-      peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer))
-        .then(() => {
-          console.log('Remote description set for offer')
-          return peerConnection.createAnswer()
-        })
-        .then((answer) => {
-          return peerConnection.setLocalDescription(answer)
-        })
-        .then(() => {
-          sendWebRTCSignalingMessage({
-            event: wsEventWebRTC,
-            data: {
-              type: 'answer',
-              answer: peerConnection.localDescription
-            }
-          })
-        })
-        .catch(error => console.error('Error handling offer:', error))
+      try {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer))
+        console.log('Remote description set for offer')
+        await createAndSendAnswer()
+      } catch (error) {
+        console.error('Error handling offer:', error)
+      }
       break
 
     case 'answer':
       // Al recibir una respuesta, establecer la descripción remota
-      peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer))
-        .then(() => {
-          console.log('Remote description set for answer')
-        })
-        .catch(error => console.error('Error setting remote description for answer:', error))
+      try {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer))
+        console.log('Remote description set for answer')
+      } catch (error) {
+        console.error('Error setting remote description for answer:', error)
+      }
       break
 
     case 'candidate': {
-      // Agregar candidato ICE solo si el estado de la señalización es estable
       const candidate = new RTCIceCandidate(data.candidate)
-      if (peerConnection.signalingState === 'stable') {
-        peerConnection.addIceCandidate(candidate)
-          .then(() => {
-            console.log('ICE candidate added')
-          })
-          .catch(error => console.error('Error adding ICE candidate:', error))
-      } else {
-        // Si la señalización no está estable, guardar el candidato en la lista pendiente
-        pendingCandidates.push(candidate)
-        console.log('ICE candidate stored, will be added later')
+      try {
+        await peerConnection.addIceCandidate(candidate)
+        console.log('ICE candidate added')
+      } catch (error) {
+        console.error('Error adding ICE candidate:', error)
       }
-      break
     }
+      break
 
     default:
       console.warn('Unknown signaling data type:', data.type)
       break
   }
-}
-
-// Enviar mensajes de señalización
-function sendWebRTCSignalingMessage (message: any) {
-  conn!.send(JSON.stringify(message))
-}
-
-// Crear y enviar oferta
-async function createAndSendOffer () {
-  const offer = await peerConnection.createOffer()
-  await peerConnection.setLocalDescription(offer)
-  sendWebRTCSignalingMessage({
-    event: wsEventWebRTC,
-    data: {
-      type: 'offer',
-      offer
-    }
-  })
-}
-
-// Crear y enviar respuesta
-async function createAndSendAnswer () {
-  const answer = await peerConnection.createAnswer()
-  await peerConnection.setLocalDescription(answer)
-  sendWebRTCSignalingMessage({
-    event: wsEventWebRTC,
-    data: {
-      type: 'answer',
-      answer
-    }
-  })
 }
 
 // Manejar el intercambio de ICE candidates
@@ -292,9 +208,45 @@ peerConnection.onicecandidate = (event) => {
   }
 }
 
+// Enviar mensajes de señalización
+function sendWebRTCSignalingMessage (message: any) {
+  conn!.send(JSON.stringify(message))
+}
+
+// Crear y enviar oferta
+async function createAndSendOffer (options?: RTCOfferOptions) {
+  console.log('=> createAndSendOffer')
+  const offer = await peerConnection.createOffer(options)
+  await peerConnection.setLocalDescription(offer)
+  sendWebRTCSignalingMessage({
+    event: wsEventWebRTC,
+    data: {
+      type: 'offer',
+      offer
+    }
+  })
+}
+
+// Crear y enviar respuesta
+async function createAndSendAnswer () {
+  console.log('=> createAndSendAnswer')
+  const answer = await peerConnection.createAnswer()
+  await peerConnection.setLocalDescription(answer)
+  sendWebRTCSignalingMessage({
+    event: wsEventWebRTC,
+    data: {
+      type: 'answer',
+      answer
+    }
+  })
+}
+
 async function sendOfferIfConnected () {
   if (isTransmitting.value && peerConnection.signalingState !== 'closed') {
-    await createAndSendOffer()
+    await createAndSendOffer({
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true
+    })
   }
 }
 
@@ -340,8 +292,7 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
         <p>Tu video</p>
       </div>
       <div class="video-container">
-        <div v-if="isRemoteLoading" class="spinner"></div>
-        <video v-else ref="remoteVideo" autoplay playsinline class="video-box"></video>
+        <video ref="remoteVideo" autoplay playsinline class="video-box"></video>
         <p>Video remoto</p>
       </div>
     </div>
@@ -470,28 +421,6 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
 .controls button {
   margin-right: 10px;
   padding: 10px;
-}
-
-.spinner {
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 60px;
-  height: 60px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
-  animation: spin 2s linear infinite;
-  margin: 0 auto;
-}
-
-/* Animación del spinner */
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 /* Media Queries para diseño responsivo */
