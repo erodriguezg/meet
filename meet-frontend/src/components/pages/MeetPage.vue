@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, nextTick } from 'vue'
 import { GeneralUtils } from '../../utils/GeneralUtils'
 import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
@@ -26,8 +26,11 @@ const meUser: string = 'Me'
 let conn: WebSocket | undefined
 
 const username = ref<string>('')
+
+// Chat variables
 const messages = ref<Message[]>([])
 const newMessage = ref<string>('')
+const chatContainer = ref<HTMLDivElement | null>(null)
 
 // WebRTC variables
 const localStream = ref<MediaStream | null>(null)
@@ -269,6 +272,9 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
     user: usernameIn,
     content: messageIn
   })
+  nextTick(() => {
+    chatContainer.value!.scrollTop = chatContainer.value!.scrollHeight
+  })
 }
 </script>
 
@@ -301,7 +307,7 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
     <div class="chat-section">
 
       <!-- Chat Messages -->
-      <div class="messages-box">
+      <div class="messages-box" ref="chatContainer">
         <div v-for="message in messages" :key="message.id" class="message"
           :class="{ 'user-message': message.user === meUser, 'system-message': message.user === systemUser }">
           <strong>{{ message.user }}:</strong> {{ message.content }}
@@ -328,6 +334,7 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
   max-width: 1200px;
   border: 1px solid #ddd;
   margin: 1rem auto;
+  max-height: 100vh;
 }
 
 /* Columna de chat (izquierda) */
@@ -341,9 +348,11 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
 
 .messages-box {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   padding: 10px;
   border-bottom: 1px solid #dddddd;
+  height: calc(100vh - 200px);
+  max-height: calc(100vh - 200px);
 }
 
 .message {
@@ -415,6 +424,8 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
 
 .controls {
   margin-bottom: 20px;
+  position: fixed;
+  bottom: 15px;
 }
 
 .controls select,
@@ -437,6 +448,15 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
   .video-box {
     height: 150px;
   }
+
+  .messages-box {
+    height: calc(50vh - 200px);
+    max-height: calc(50vh - 200px);
+  }
+
+  .controls {
+    bottom: -15px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -450,6 +470,15 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
 
   .send-button {
     padding: 8px 12px;
+  }
+
+  .messages-box {
+    height: calc(70vh - 200px);
+    max-height: calc(70vh - 200px);
+  }
+
+  .controls {
+    bottom: -15px;
   }
 }
 </style>

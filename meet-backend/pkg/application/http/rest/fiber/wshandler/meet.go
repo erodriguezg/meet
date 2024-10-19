@@ -59,7 +59,7 @@ func (port *meetWebSocketFiberHandler) meetWebSocketEndpoint(kws *socketio.Webso
 	broadcastMsg := chatEventMessage{
 		Event:   eventChatInfo,
 		From:    systemChatUser,
-		Message: fmt.Sprintf("New user connected: %s and UUID: %s", userId, kws.UUID),
+		Message: fmt.Sprintf("New user connected: %s", userId),
 	}
 	broadcastMsgJson, err := json.Marshal(broadcastMsg)
 	if err != nil {
@@ -73,7 +73,7 @@ func (port *meetWebSocketFiberHandler) meetWebSocketEndpoint(kws *socketio.Webso
 	welcomeMsg := chatEventMessage{
 		Event:   eventChatInfo,
 		From:    systemChatUser,
-		Message: fmt.Sprintf("Hello user: %s with UUID: %s", userId, kws.UUID),
+		Message: fmt.Sprintf("Hello user: %s", userId),
 	}
 
 	welcomeMsgJson, err := json.Marshal(welcomeMsg)
