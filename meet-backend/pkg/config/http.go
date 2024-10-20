@@ -28,7 +28,7 @@ func configHttp() {
 	v1Router := appFiber.Group("/api/v1")
 	configFiberMiddlewares()
 	configFiberHandlers(&v1Router)
-	wshandler.InitWebSocketsHandlers(wsRoot, appFiber)
+	wshandler.InitWebSocketsHandlers(wsRoot, appFiber, log)
 	configFiberStatic()
 }
 

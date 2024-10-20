@@ -121,14 +121,21 @@ function configWebSocket () {
           appendChatMessage(jsonEventMsg.from, jsonEventMsg.message)
         }
       } else if (jsonEventMsg.event === wsEventChatInfo) {
-        appendChatMessage(systemUser, jsonEventMsg.message)
-        setTimeout(sendOfferIfConnected, 1000)
+        processChatInfoMessage(jsonEventMsg)
       } else if (jsonEventMsg.event === wsEventWebRTC) {
         await handleWebRTCSignalingData(jsonEventMsg.message)
       }
     }
   } else {
     appendChatMessage(systemUser, 'Your browser does not support WebSockets')
+  }
+}
+
+function processChatInfoMessage (event: any) {
+  const msg = event.message as string
+  appendChatMessage(systemUser, msg)
+  if (msg.toLowerCase().includes('new user connected')) {
+    setTimeout(sendOfferIfConnected, 1000)
   }
 }
 

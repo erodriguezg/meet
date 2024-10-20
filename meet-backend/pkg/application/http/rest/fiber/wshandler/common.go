@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/contrib/socketio"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
 )
 
 type WebSocketFiberHandler interface {
@@ -47,17 +48,17 @@ func NewMiddlewareFunction(httpSecurityService security.HttpSecurityService) fun
 	}
 }
 
-func InitWebSocketsHandlers(wsRoot string, appFiber *fiber.App) {
+func InitWebSocketsHandlers(wsRoot string, appFiber *fiber.App, log *zap.Logger) {
 	wsClients = make(map[string]string)
 
 	// Multiple event handling supported
 	socketio.On(socketio.EventConnect, func(ep *socketio.EventPayload) {
-		fmt.Printf("Connection event 1 - User: %s \n", ep.Kws.GetStringAttribute("user_id"))
+		log.Debug(fmt.Sprintf("Connection event 1 - User: %s \n", ep.Kws.GetStringAttribute("user_id")))
 	})
 
 	// Custom event handling supported
 	socketio.On("CUSTOM_EVENT", func(ep *socketio.EventPayload) {
-		fmt.Printf("Custom event - User: %s \n", ep.Kws.GetStringAttribute("user_id"))
+		log.Debug(fmt.Sprintf("Custom event - User: %s \n", ep.Kws.GetStringAttribute("user_id")))
 		// --->
 
 		// DO YOUR BUSINESS HERE
@@ -68,7 +69,7 @@ func InitWebSocketsHandlers(wsRoot string, appFiber *fiber.App) {
 	// On message event
 	socketio.On(socketio.EventMessage, func(ep *socketio.EventPayload) {
 
-		fmt.Printf("Message event - User: %s - Message: %s \n", ep.Kws.GetStringAttribute("user_id"), string(ep.Data))
+		log.Debug(fmt.Sprintf("Message event - User: %s - Message: %s \n", ep.Kws.GetStringAttribute("user_id"), string(ep.Data)))
 
 		message := MessageObject{}
 
@@ -104,8 +105,22 @@ func InitWebSocketsHandlers(wsRoot string, appFiber *fiber.App) {
 	// On disconnect event
 	socketio.On(socketio.EventDisconnect, func(ep *socketio.EventPayload) {
 		// Remove the user from the local clients
+		userId := ep.Kws.GetStringAttribute("user_id")
+		log.Debug(fmt.Sprintf("Disconnection event - User: %s \n", userId))
 		delete(wsClients, ep.Kws.GetStringAttribute("user_id"))
-		fmt.Printf("Disconnection event - User: %s \n", ep.Kws.GetStringAttribute("user_id"))
+
+		//Broadcast to all the connected users the newcomer
+		broadcastMsg := chatEventMessage{
+			Event:   eventChatInfo,
+			From:    systemChatUser,
+			Message: fmt.Sprintf("User disconnected: %s", userId),
+		}
+		broadcastMsgJson, err := json.Marshal(broadcastMsg)
+		if err != nil {
+			return
+		}
+
+		ep.Kws.Broadcast(broadcastMsgJson, true, socketio.TextMessage)
 	})
 
 	// On close event
@@ -113,12 +128,12 @@ func InitWebSocketsHandlers(wsRoot string, appFiber *fiber.App) {
 	socketio.On(socketio.EventClose, func(ep *socketio.EventPayload) {
 		// Remove the user from the local clients
 		delete(wsClients, ep.Kws.GetStringAttribute("user_id"))
-		fmt.Printf("Close event - User: %s \n", ep.Kws.GetStringAttribute("user_id"))
+		log.Debug(fmt.Sprintf("Close event - User: %s \n", ep.Kws.GetStringAttribute("user_id")))
 	})
 
 	// On error event
 	socketio.On(socketio.EventError, func(ep *socketio.EventPayload) {
-		fmt.Printf("Error event - User: %s \n", ep.Kws.GetStringAttribute("user_id"))
+		log.Debug(fmt.Sprintf("Error event - User: %s \n", ep.Kws.GetStringAttribute("user_id")))
 	})
 
 	wsHandlers := [...]WebSocketFiberHandler{
