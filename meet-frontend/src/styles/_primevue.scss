@@ -1,5 +1,6 @@
-.p-component {
+@use './_vars' as vars;
 
+.p-component {
 
     &.p-dataview-grid {
         .p-dataview-content {
@@ -19,5 +20,18 @@
 
     }
 
-
+    &.p-button {
+        background-color: vars.$colorPrimary !important;
+        color: white !important;
+        border-radius: 4px !important;
+        padding: 0.75rem 1.25rem !important;
+        font-weight: 500;
+      }
+    
+    &.p-inputtext {
+        border: 1px solid vars.$colorPrimaryLight;
+        font-size: 1.4rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
 }

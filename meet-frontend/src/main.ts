@@ -8,9 +8,6 @@ import { createPinia } from 'pinia'
 import 'viewerjs/dist/viewer.css'
 import VueViewer from 'v-viewer'
 
-import 'primevue/resources/themes/lara-light-indigo/theme.css'
-import 'primeicons/primeicons.css'
-
 import './styles/main.scss'
 
 import ConfirmationService from 'primevue/confirmationservice'
