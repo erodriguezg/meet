@@ -312,6 +312,7 @@ onBeforeUnmount(() => {
         <video
           :id="'remoteVideo' + index"
           ref="videoElement"
+          controls
           autoplay
           playsinline
           muted
