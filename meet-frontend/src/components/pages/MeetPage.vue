@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { GeneralUtils } from '../../utils/GeneralUtils'
 import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
@@ -33,10 +33,7 @@ const newMessage = ref<string>('')
 const chatContainer = ref<HTMLDivElement | null>(null)
 
 // WebRTC variables
-const localStream = ref<MediaStream | null>(null)
-const remoteStream = ref<MediaStream | null>(null)
-const localVideo = ref<HTMLVideoElement | null>(null)
-const remoteVideo = ref<HTMLVideoElement | null>(null)
+const videoStreams = ref<MediaStream[]>([])
 const peerConnection = new RTCPeerConnection({
   iceServers: [
     {
@@ -61,14 +58,12 @@ onMounted(async () => {
 
   // Configuración del stream remoto
   peerConnection.ontrack = (event) => {
-    if (!remoteStream.value) {
-      remoteStream.value = new MediaStream()
+    if (event.streams && event.streams[0]) {
+      const remoteStream = new MediaStream()
+      videoStreams.value.push(remoteStream)
+      // Agregar las pistas remotas al stream remoto
+      event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track))
     }
-    if (remoteVideo.value) {
-      remoteVideo.value.srcObject = remoteStream.value
-    }
-    // Agregar las pistas remotas al stream remoto
-    event.streams[0].getTracks().forEach(track => remoteStream.value?.addTrack(track))
   }
 })
 
@@ -154,11 +149,11 @@ async function setupLocalMedia () {
       mediaConstraints = { video: false, audio: false }
     }
 
-    localStream.value = await navigator.mediaDevices.getUserMedia(mediaConstraints)
-    if (localVideo.value && localStream.value) {
-      localVideo.value.srcObject = localStream.value
+    const localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+    if (localStream) {
+      videoStreams.value.push(localStream)
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream))
     }
-    localStream.value?.getTracks().forEach(track => peerConnection.addTrack(track, localStream.value!))
   } catch (error) {
     console.error('Error al obtener medios locales:', error)
   }
@@ -283,6 +278,19 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
     chatContainer.value!.scrollTop = chatContainer.value!.scrollHeight
   })
 }
+
+function cleanupStreams () {
+  videoStreams.value.forEach((stream) => {
+    stream.getTracks().forEach((track) => {
+      track.stop()
+    })
+  })
+}
+
+onBeforeUnmount(() => {
+  cleanupStreams()
+})
+
 </script>
 
 <template>
@@ -299,17 +307,23 @@ function appendChatMessage (usernameIn: string, messageIn: string) {
     </div>
 
     <!-- Conference Section -->
-    <div class="conference-section">
-      <div class="video-container">
-        <video ref="localVideo" muted autoplay playsinline class="video-box"></video>
-        <p>Tu video</p>
-      </div>
-      <div class="video-container">
-        <video ref="remoteVideo" muted autoplay playsinline class="video-box"></video>
-        <p>Video remoto</p>
+    <div v-if="videoStreams.length > 0" class="conference-section">
+      <div v-for="(stream, index) in videoStreams" :key="index" class="video-container">
+        <video
+          :id="'remoteVideo' + index"
+          ref="videoElement"
+          autoplay
+          playsinline
+          muted
+          :srcObject="stream"
+          class="video-box"
+        ></video>
       </div>
     </div>
 
+    <div v-else class="conference-section">
+      <p>No se han iniciado transmisiones</p>
+    </div>
     <!-- Chat Section -->
     <div class="chat-section">
 
