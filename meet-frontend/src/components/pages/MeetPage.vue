@@ -3,6 +3,9 @@ import { onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { GeneralUtils } from '../../utils/GeneralUtils'
 import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
+import userConnectedSoundFile from './../../assets/sounds/user-online.mp3'
+import userDisconnectionSoundFile from './../../assets/sounds/user-disconnection.mp3'
+import newMessageSoundFile from './../../assets/sounds/new-msg.mp3'
 
 interface Message {
   id: number
@@ -50,6 +53,10 @@ const peerConnection = new RTCPeerConnection({
 
 const mediaType = ref<'video' | 'audio' | 'both' | 'none'>('none')
 const isTransmitting = ref(false)
+
+const userConnectedSound = new Audio(userConnectedSoundFile)
+const userDisconnectionSound = new Audio(userDisconnectionSoundFile)
+const newMessageSound = new Audio(newMessageSoundFile)
 
 onMounted(async () => {
   console.log(`room: ${roomId}`)
@@ -113,6 +120,9 @@ function configWebSocket () {
         if (jsonEventMsg.from === username.value) {
           appendChatMessage(meUser, jsonEventMsg.message)
         } else {
+          if (document.hidden) {
+            newMessageSound.play()
+          }
           appendChatMessage(jsonEventMsg.from, jsonEventMsg.message)
         }
       } else if (jsonEventMsg.event === wsEventChatInfo) {
@@ -130,7 +140,10 @@ function processChatInfoMessage (event: any) {
   const msg = event.message as string
   appendChatMessage(systemUser, msg)
   if (msg.toLowerCase().includes('new user connected')) {
+    userConnectedSound.play()
     setTimeout(sendOfferIfConnected, 1000)
+  } else if (msg.toLocaleLowerCase().includes('user disconnected')) {
+    userDisconnectionSound.play()
   }
 }
 
