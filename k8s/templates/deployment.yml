@@ -41,8 +41,11 @@ metadata:
   labels:
     app: meet-app
 spec:
+  type: NodePort
   ports:
     - port: 3000
+      targetPort: 3000
       protocol: TCP
+      nodePort: 32000
   selector:
     app: meet-app
