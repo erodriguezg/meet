@@ -21,51 +21,59 @@ isLoggedIn.value = AuthService.isAuthenticated()
 const items = ref<any>([
   {
     label: 'My Profile',
-    visible: AuthService.hasPermission(Permission.EDIT_OWN_PROFILE),
-    icon: 'pi pi-fw pi-user',
-    items: [
-      {
-        label: 'Account Details',
-        icon: 'fa-regular fa-address-card'
-      },
-      {
-        label: 'Publisher Details',
-        icon: 'fa-solid fa-address-card',
-        visible: AuthService.hasPermission(Permission.PUBLISH)
-      }
-    ]
+    visible: AuthService.hasAnyPermission([Permission.EDIT_OWN_PROFILE, Permission.MANAGE_SYSTEM]),
+    icon: 'fa-regular fa-address-card',
+    command: () => {
+      router.push({
+        name: RoutesNames.EDIT_OWN_PROFILE
+      })
+    }
   },
   {
     label: 'Administration',
     icon: 'pi pi-fw pi-user',
-    visible: AuthService.hasPermission(Permission.MANAGE),
+    visible: AuthService.hasPermission(Permission.MANAGE_SYSTEM),
     items: [
       {
         label: 'Users',
-        icon: 'pi pi-fw pi-user-plus'
-      },
-      {
-        label: 'Categories',
         icon: 'pi pi-fw pi-user-plus',
         command: () => {
           router.push({
-            name: RoutesNames.ADMINISTRATION_CATEGORIES
+            name: RoutesNames.MANAGE_USERS
           })
         }
       }
     ]
   },
   {
-    label: 'Publications',
-    icon: 'fa-regular fa-newspaper',
-    visible: AuthService.hasPermission(Permission.PUBLISH),
+    label: 'Rooms',
+    icon: 'fa-regular fa-comments-o',
+    visible: AuthService.hasAnyPermission([Permission.CREATE_ROOM, Permission.MANAGE_SYSTEM]),
     items: [
       {
-        label: 'New Publication',
-        icon: 'fa-regular fa-note-sticky',
+        label: 'Create Room',
+        icon: 'fa-regular fa-plus',
         command: () => {
           router.push({
-            name: RoutesNames.NEW_PUBLICATION_PAGE
+            name: RoutesNames.CREATE_ROOM
+          })
+        }
+      },
+      {
+        label: 'Manage Own Rooms',
+        icon: 'fa-regular fa-smile-o',
+        command: () => {
+          router.push({
+            name: RoutesNames.MANAGE_OWN_ROOMS
+          })
+        }
+      },
+      {
+        label: 'Manage All Rooms',
+        icon: 'fa-regular fa-globe',
+        command: () => {
+          router.push({
+            name: RoutesNames.MANAGE_ROOMS
           })
         }
       }
@@ -80,7 +88,7 @@ const items = ref<any>([
 
 const logoAction = () => {
   router.push({
-    name: RoutesNames.HOME_PAGE
+    name: RoutesNames.LOGIN_PAGE
   })
 }
 

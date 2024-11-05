@@ -31,9 +31,7 @@ func init() {
 				[]interface{}{
 					bson.M{"code": int(1), "name": "Manage System"},
 					bson.M{"code": int(2), "name": "Edit Own Profile"},
-					bson.M{"code": int(3), "name": "Edit All Publish"},
-					bson.M{"code": int(4), "name": "Publish"},
-					bson.M{"code": int(5), "name": "Comment"},
+					bson.M{"code": int(3), "name": "Create Room"},
 				},
 			)
 

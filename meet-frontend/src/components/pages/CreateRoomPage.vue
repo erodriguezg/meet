@@ -8,5 +8,5 @@ onMounted(() => {
 </script>
 
 <template>
-    <h1>About Page</h1>
+    <h1>Create Room</h1>
 </template>

@@ -9,6 +9,14 @@ const hasPermission = (to: any, permission: Permission): any => {
   }
 }
 
+const hasAnyPermission = (to: any, permissionList: Permission[]): any => {
+  if (AuthService.hasAnyPermission(permissionList)) {
+    return true
+  } else {
+    return { name: RoutesNames.HOME_PAGE }
+  }
+}
+
 const hasProfile = (to: any, profile: Profile): any => {
   if (AuthService.hasProfile(profile)) {
     return to
@@ -17,7 +25,17 @@ const hasProfile = (to: any, profile: Profile): any => {
   }
 }
 
+const hasAnyProfile = (to: any, profileList: Profile[]): any => {
+  if (AuthService.hasAnyProfile(profileList)) {
+    return to
+  } else {
+    return { name: RoutesNames.HOME_PAGE }
+  }
+}
+
 export const AuthGuard = {
   hasPermission,
-  hasProfile
+  hasAnyPermission,
+  hasProfile,
+  hasAnyProfile
 }

@@ -35,6 +35,18 @@ func init() {
 						"lastName":    "Rodriguez",
 						"profileCode": 1,
 						"active":      true},
+					bson.M{
+						"email":       "pongoway3@gmail.com",
+						"firstName":   "Pongo",
+						"lastName":    "Way3",
+						"profileCode": 1,
+						"active":      true},
+					bson.M{
+						"email":       "pongoway2@gmail.com",
+						"firstName":   "Pongo",
+						"lastName":    "Way2",
+						"profileCode": 2,
+						"active":      true},
 				},
 			)
 

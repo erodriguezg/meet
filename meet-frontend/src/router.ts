@@ -4,22 +4,23 @@ import { Permission } from './services/AuthService'
 import { AuthGuard } from './guards/auth-guards'
 
 const MainTemplate = (): any => import('./components/template/MainTemplate.vue')
-const CleanTemplate = (): any => import('./components/template/CleanTemplate.vue')
+const EmptyTemplate = (): any => import('./components/template/EmptyTemplate.vue')
 const CallbackLoginPage = (): any => import('./components/pages/CallbackLoginPage.vue')
-const HomePage = (): any => import('./components/pages/HomePage.vue')
-const EditPublicationPage = (): any => import('./components/pages/EditPublicationPage.vue')
-const CategoriesPage = (): any => import('./components/pages/CategoriesPage.vue')
+const LoginPage = (): any => import('./components/pages/LoginPage.vue')
 const MeetPage = (): any => import('./components/pages/MeetPage.vue')
+const UsersPage = (): any => import('./components/pages/UsersPage.vue')
+const RoomsPage = (): any => import('./components/pages/RoomsPage.vue')
+const CreateRoomPage = (): any => import('./components/pages/CreateRoomPage.vue')
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: CleanTemplate,
+    component: EmptyTemplate,
     children: [
       {
-        name: RoutesNames.HOME_PAGE,
+        name: RoutesNames.LOGIN_PAGE,
         path: '',
-        component: HomePage
+        component: LoginPage
       },
       {
         name: RoutesNames.MEET_PAGE,
@@ -33,28 +34,40 @@ const routes: RouteRecordRaw[] = [
     component: MainTemplate,
     children: [
       {
-        name: RoutesNames.ADMINISTRATION_CATEGORIES,
-        path: 'categories',
-        component: CategoriesPage,
-        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.MANAGE)
-      },
-      {
-        name: RoutesNames.NEW_PUBLICATION_PAGE,
-        path: '/publication/new',
-        component: EditPublicationPage,
-        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.PUBLISH)
+        name: RoutesNames.MANAGE_USERS,
+        path: 'users',
+        component: UsersPage,
+        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.MANAGE_SYSTEM)
       }
     ]
   },
   {
-    path: '/publication',
+    path: '/rooms',
     component: MainTemplate,
     children: [
       {
-        name: RoutesNames.NEW_PUBLICATION_PAGE,
-        path: '/new',
-        component: EditPublicationPage,
-        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.PUBLISH)
+        name: RoutesNames.CREATE_ROOM,
+        path: 'create',
+        component: CreateRoomPage,
+        beforeEnter: (to: any, from: any) => AuthGuard.hasAnyPermission(to, [Permission.CREATE_ROOM, Permission.MANAGE_SYSTEM])
+      },
+      {
+        name: RoutesNames.MANAGE_ROOMS,
+        path: 'all',
+        component: RoomsPage,
+        meta: {
+          showAllRooms: true
+        },
+        beforeEnter: (to: any, from: any) => AuthGuard.hasPermission(to, Permission.MANAGE_SYSTEM)
+      },
+      {
+        name: RoutesNames.MANAGE_OWN_ROOMS,
+        path: 'own',
+        component: RoomsPage,
+        meta: {
+          showAllRooms: false
+        },
+        beforeEnter: (to: any, from: any) => AuthGuard.hasAnyPermission(to, [Permission.CREATE_ROOM, Permission.MANAGE_SYSTEM])
       }
     ]
   },

@@ -29,9 +29,8 @@ func init() {
 			_, err := db.Collection(profilesCollection).InsertMany(
 				context.TODO(),
 				[]interface{}{
-					bson.M{"code": int(1), "name": "Administrator", "permissionsCodes": []int{1, 3}},
-					bson.M{"code": int(2), "name": "Publisher", "permissionsCodes": []int{2, 4, 5}},
-					bson.M{"code": int(3), "name": "User", "permissionsCodes": []int{2, 5}},
+					bson.M{"code": int(1), "name": "Administrator", "permissionsCodes": []int{1}},
+					bson.M{"code": int(2), "name": "User", "permissionsCodes": []int{2, 3}},
 				},
 			)
 

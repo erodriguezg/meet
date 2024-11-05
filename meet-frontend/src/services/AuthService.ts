@@ -20,16 +20,13 @@ export interface Identity {
 
 export enum Profile {
   ADMINISTRATOR = 1,
-  PUBLISHER = 2,
-  USER = 3
+  USER = 2
 }
 
 export enum Permission {
-  MANAGE = 1,
+  MANAGE_SYSTEM = 1,
   EDIT_OWN_PROFILE = 2,
-  EDIT_ALL_PUBLISH = 3,
-  PUBLISH = 4,
-  COMMENT = 5
+  CREATE_ROOM = 3
 }
 
 const processLoginCallback = async (code: string, state: string): Promise<void> => {
@@ -57,8 +54,16 @@ const hasProfile = (profile: Profile): boolean => {
   return getIdentity()?.profileCode === profile
 }
 
+const hasAnyProfile = (profileList: Profile[]): boolean => {
+  return profileList.some(p => hasProfile(p)) ?? false
+}
+
 const hasPermission = (permission: Permission): boolean => {
   return getIdentity()?.permissionsCodes?.some(pc => Number(pc) === Number(permission)) ?? false
+}
+
+const hasAnyPermission = (permissionList: Permission[]): boolean => {
+  return permissionList.some(p => hasPermission(p)) ?? false
 }
 
 const logout = (): void => {
@@ -88,5 +93,7 @@ export const AuthService = {
   logout,
   isAuthenticated,
   hasProfile,
-  hasPermission
+  hasAnyProfile,
+  hasPermission,
+  hasAnyPermission
 }
