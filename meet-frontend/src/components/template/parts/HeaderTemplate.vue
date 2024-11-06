@@ -51,16 +51,8 @@ const items = ref<any>([
     visible: AuthService.hasAnyPermission([Permission.CREATE_ROOM, Permission.MANAGE_SYSTEM]),
     items: [
       {
-        label: 'Create Room',
-        icon: 'fa-regular fa-plus',
-        command: () => {
-          router.push({
-            name: RoutesNames.CREATE_ROOM
-          })
-        }
-      },
-      {
         label: 'Manage Own Rooms',
+        visible: AuthService.hasPermission(Permission.CREATE_ROOM),
         icon: 'fa-regular fa-smile-o',
         command: () => {
           router.push({
@@ -71,6 +63,7 @@ const items = ref<any>([
       {
         label: 'Manage All Rooms',
         icon: 'fa-regular fa-globe',
+        visible: AuthService.hasPermission(Permission.MANAGE_SYSTEM),
         command: () => {
           router.push({
             name: RoutesNames.MANAGE_ROOMS

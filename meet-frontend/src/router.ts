@@ -10,7 +10,6 @@ const LoginPage = (): any => import('./components/pages/LoginPage.vue')
 const MeetPage = (): any => import('./components/pages/MeetPage.vue')
 const UsersPage = (): any => import('./components/pages/UsersPage.vue')
 const RoomsPage = (): any => import('./components/pages/RoomsPage.vue')
-const CreateRoomPage = (): any => import('./components/pages/CreateRoomPage.vue')
 
 const routes: RouteRecordRaw[] = [
   {
@@ -45,12 +44,6 @@ const routes: RouteRecordRaw[] = [
     path: '/rooms',
     component: MainTemplate,
     children: [
-      {
-        name: RoutesNames.CREATE_ROOM,
-        path: 'create',
-        component: CreateRoomPage,
-        beforeEnter: (to: any, from: any) => AuthGuard.hasAnyPermission(to, [Permission.CREATE_ROOM, Permission.MANAGE_SYSTEM])
-      },
       {
         name: RoutesNames.MANAGE_ROOMS,
         path: 'all',
