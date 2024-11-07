@@ -111,7 +111,7 @@ func (port *domainRoomService) roomToDTO(room *domain.Room, person *domain.Perso
 	}
 
 	return dto.RoomDTO{
-		RoomHash:            hashutil.MD5HashB64URLEncoding(room.Id.Hex()),
+		RoomHash:            hashutil.SHA256HashB64UrlEncodingTruncated(room.Id.Hex()),
 		Owner:               owner,
 		CreationDate:        room.CreationDate,
 		AnonymousAccess:     room.AnonymousAccess,

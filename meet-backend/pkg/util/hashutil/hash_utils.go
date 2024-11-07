@@ -1,7 +1,6 @@
 package hashutil
 
 import (
-	"crypto/md5"
 	"crypto/sha256"
 	"fmt"
 
@@ -30,8 +29,9 @@ func SHA256HashB64UrlEncoding(data string) string {
 	return base64.URLEncoding.EncodeToString(sha256Hash[:])
 }
 
-func MD5HashB64URLEncoding(input string) string {
-	hash := md5.Sum([]byte(input))
-	base64URL := base64.URLEncoding.EncodeToString(hash[:])
+func SHA256HashB64UrlEncodingTruncated(data string) string {
+	hash := sha256.Sum256([]byte(data))
+	truncatedHash := hash[:16] // Usa solo los primeros 16 bytes (128 bits)
+	base64URL := base64.URLEncoding.EncodeToString(truncatedHash)
 	return base64URL
 }
