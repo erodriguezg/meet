@@ -10,6 +10,10 @@ type Date time.Time
 
 const dateLayout = "2006-01-02"
 
+func NewFromTime(newTime time.Time) Date {
+	return Date(newTime)
+}
+
 // UnmarshalJSON Parses the json string in the custom format
 func (ct *Date) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), `"`)

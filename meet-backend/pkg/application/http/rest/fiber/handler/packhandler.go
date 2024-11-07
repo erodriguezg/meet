@@ -78,10 +78,6 @@ func (port *packFiberHandler) RegisterRoutes(fiberRouter *fiber.Router) {
 // @Router       /v1/pack/{modelNickName}/new [put]
 func (port *packFiberHandler) createNewPack(c *fiber.Ctx) error {
 	modelNickNameParam := c.Params("modelNickName")
-	_, err := security.MustHavePermissionToEditModel(port.securityService, c, modelNickNameParam)
-	if err != nil {
-		return err
-	}
 	port.log.Debug("-> createNewPack", zap.String("modelNickName", modelNickNameParam))
 	newPack, err := port.packService.CreateNewPack(modelNickNameParam)
 	if err != nil {
@@ -114,11 +110,6 @@ func (port *packFiberHandler) deletePackItem(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	_, err = security.MustHavePermissionToEditModel(port.securityService, c, modelNickNameParam)
-	if err != nil {
-		return err
-	}
-
 	port.log.Debug("-> deletePackItem.",
 		zap.String("modelNickName", modelNickNameParam),
 		zap.Int("packNumber", packNumber),
@@ -150,10 +141,6 @@ func (port *packFiberHandler) deletePack(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	_, err = security.MustHavePermissionToEditModel(port.securityService, c, modelNickNameParam)
-	if err != nil {
-		return err
-	}
 	port.log.Debug("-> deletePack",
 		zap.String("modelNickName", modelNickNameParam),
 		zap.Int("packNumber", packNumber))
@@ -179,10 +166,6 @@ func (port *packFiberHandler) deletePack(c *fiber.Ctx) error {
 func (port *packFiberHandler) prepareUploadForPackItem(c *fiber.Ctx) error {
 	var payload PrepareUploadPackItemDto
 	err := c.BodyParser(&payload)
-	if err != nil {
-		return err
-	}
-	_, err = security.MustHavePermissionToEditModel(port.securityService, c, payload.ModelNickName)
 	if err != nil {
 		return err
 	}
@@ -213,11 +196,6 @@ func (port *packFiberHandler) readyToPublishPack(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = security.MustHavePermissionToEditModel(port.securityService, c, payload.ModelNickName)
-	if err != nil {
-		return err
-	}
-
 	port.log.Debug("-> readyToPublishPack", zap.Any("payload", payload))
 
 	err = port.packService.ReadyToPublishPack(payload.ModelNickName, payload.PackNumber)
@@ -243,11 +221,6 @@ func (port *packFiberHandler) readyToPublishPack(c *fiber.Ctx) error {
 func (port *packFiberHandler) publishPack(c *fiber.Ctx) error {
 	var payload PackDto
 	err := c.BodyParser(&payload)
-	if err != nil {
-		return err
-	}
-
-	_, err = security.MustHavePermissionToEditModel(port.securityService, c, payload.ModelNickName)
 	if err != nil {
 		return err
 	}
@@ -398,12 +371,8 @@ func (port *packFiberHandler) getPacksFromModel(c *fiber.Ctx) error {
 func (port *packFiberHandler) editPackTitle(c *fiber.Ctx) error {
 	modelNickNameParam := c.Params("modelNickName")
 	packNumberParam := c.Params("packNumber")
-	_, err := security.MustHavePermissionToEditModel(port.securityService, c, modelNickNameParam)
-	if err != nil {
-		return err
-	}
 	var payload EditPackTitleDto
-	err = c.BodyParser(&payload)
+	err := c.BodyParser(&payload)
 	if err != nil {
 		return err
 	}
@@ -440,12 +409,8 @@ func (port *packFiberHandler) editPackTitle(c *fiber.Ctx) error {
 func (port *packFiberHandler) editPackDescription(c *fiber.Ctx) error {
 	modelNickNameParam := c.Params("modelNickName")
 	packNumberParam := c.Params("packNumber")
-	_, err := security.MustHavePermissionToEditModel(port.securityService, c, modelNickNameParam)
-	if err != nil {
-		return err
-	}
 	var payload EditPackDescriptionDto
-	err = c.BodyParser(&payload)
+	err := c.BodyParser(&payload)
 	if err != nil {
 		return err
 	}

@@ -8,6 +8,8 @@ import (
 )
 
 type RoomRepository interface {
+	FindAll() ([]domain.Room, error)
+
 	FindById(roomId primitive.ObjectID) (*domain.Room, error)
 
 	FindByOwnerPersonId(ownerPersonId primitive.ObjectID) ([]domain.Room, error)

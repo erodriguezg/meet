@@ -86,12 +86,9 @@ func configFiberHandlers(v1 *fiber.Router) {
 		handler.NewPersonFiberHandler(personService, log),
 		handler.NewSecurityHandler(httpSecurityService, log),
 		handler.NewProfileFiberHandler(profileService, log),
-		handler.NewModelFiberHandler(modelService, httpSecurityService, log),
 		handler.NewFileFiberHandler(fileService, httpSecurityService, log),
 		handler.NewPackFiberHandler(packService, httpSecurityService, validate, log),
 		handler.NewBuyPackHandler(buyPackService, httpSecurityService, log),
-		handler.NewChiliBankAccountFiberHandler(chiliBankService, httpSecurityService, log),
-		handler.NewPackPaymentMethodFiberHandler(packPaymentMethodService, httpSecurityService, log),
 	}
 	for _, fHandler := range v1Handlers {
 		fHandler.RegisterRoutes(v1)

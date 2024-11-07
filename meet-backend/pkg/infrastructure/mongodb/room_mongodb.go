@@ -24,6 +24,12 @@ func NewRoomMongoDB(mongoDB *mongo.Database) repository.RoomRepository {
 	return &roomMongoDB{mongoDB}
 }
 
+// FindAll implements repository.RoomRepository.
+func (port *roomMongoDB) FindAll() ([]domain.Room, error) {
+	filter := bson.M{}
+	return port.findMany(filter)
+}
+
 // Delete implements repository.RoomRepository.
 func (port *roomMongoDB) Delete(roomId primitive.ObjectID) error {
 	filter := bson.M{"_id": roomId}

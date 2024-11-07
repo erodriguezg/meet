@@ -5,22 +5,19 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/erodriguezg/meet/pkg/core/domain"
 	"github.com/erodriguezg/meet/pkg/core/service"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type FiberIdentity struct {
-	PersonId         string  `json:"personId"`
-	Email            string  `json:"email"`
-	FirstName        string  `json:"firstName"`
-	LastName         string  `json:"lastName"`
-	ProfileCode      int     `json:"profileCode"`
-	ProfileName      string  `json:"profileName"`
-	PermissionsCodes []int   `json:"permissionsCodes"`
-	ModelId          *string `json:"modelId,omitempty"`
-	ModelNickName    *string `json:"modelNickName,omitempty"`
+	PersonId         string `json:"personId"`
+	Email            string `json:"email"`
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	ProfileCode      int    `json:"profileCode"`
+	ProfileName      string `json:"profileName"`
+	PermissionsCodes []int  `json:"permissionsCodes"`
 }
 
 func (port *FiberIdentity) MustHaveProfile(profileCode int) error {
@@ -126,20 +123,6 @@ func (port *FiberIdentityUtil) GetIdentity(c *fiber.Ctx) (*FiberIdentity, error)
 		return nil, NewAccessDeniedError(fmt.Errorf("no profile was found with code: %d on identity creation", person.ProfileCode))
 	}
 
-	var modelNickName *string
-	var modelId *string
-	if profile.Code == domain.ProfileCodeModel {
-		model, err := port.modelService.FindModelByPersonId(person.Id.Hex())
-		if err != nil {
-			return nil, fmt.Errorf("error searching model with person id: %s. %w", *person.Id, err)
-		}
-		if model != nil {
-			idHex := model.Id.Hex()
-			modelNickName = &model.NickName
-			modelId = &idHex
-		}
-	}
-
 	identity := FiberIdentity{
 		PersonId:         person.Id.Hex(),
 		Email:            person.Email,
@@ -148,8 +131,6 @@ func (port *FiberIdentityUtil) GetIdentity(c *fiber.Ctx) (*FiberIdentity, error)
 		ProfileCode:      profile.Code,
 		ProfileName:      profile.Name,
 		PermissionsCodes: profile.PermissionsCodes,
-		ModelId:          modelId,
-		ModelNickName:    modelNickName,
 	}
 
 	return &identity, nil
