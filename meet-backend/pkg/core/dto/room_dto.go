@@ -23,7 +23,6 @@ type CreateRoomDTO struct {
 }
 
 type ChangeRoomVisibilityRoomDTO struct {
-	OwnerPersonId      string `json:"ownerPersonId"`
 	RoomHash           string `json:"roomHash"`
 	NewAnonymousAccess bool   `json:"newAnonymousAccess"`
 }

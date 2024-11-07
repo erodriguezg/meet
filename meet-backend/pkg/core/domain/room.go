@@ -7,6 +7,7 @@ import (
 
 type Room struct {
 	Id                  *primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	RoomHash            *string             `json:"roomHash,omitempty" bson:"roomHash,omitempty"`
 	OwnerPersonId       primitive.ObjectID  `json:"ownerPersonId" bson:"ownerPersonId"`
 	CreationDate        datetime.Date       `json:"creationDate" bson:"creationDate"`
 	AnonymousAccess     bool                `json:"anonymousAccess" bson:"anonymousAccess"`

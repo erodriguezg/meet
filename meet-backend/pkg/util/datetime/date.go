@@ -32,3 +32,8 @@ func (ct *Date) String() string {
 	t := time.Time(*ct)
 	return fmt.Sprintf("%q", t.Format(dateLayout))
 }
+
+// ToTime convierte el tipo Date a un time.Time
+func (ct Date) ToTime() time.Time {
+	return time.Time(ct)
+}

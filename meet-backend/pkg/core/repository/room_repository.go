@@ -12,6 +12,8 @@ type RoomRepository interface {
 
 	FindById(roomId primitive.ObjectID) (*domain.Room, error)
 
+	FindByRoomHash(roomHash string) (*domain.Room, error)
+
 	FindByOwnerPersonId(ownerPersonId primitive.ObjectID) ([]domain.Room, error)
 
 	FindsWithoutInteractionSince(limitDate time.Time) ([]domain.Room, error)

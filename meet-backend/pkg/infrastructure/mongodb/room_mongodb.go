@@ -30,18 +30,10 @@ func (port *roomMongoDB) FindAll() ([]domain.Room, error) {
 	return port.findMany(filter)
 }
 
-// Delete implements repository.RoomRepository.
-func (port *roomMongoDB) Delete(roomId primitive.ObjectID) error {
-	filter := bson.M{"_id": roomId}
-	_, err := port.getCollection().DeleteOne(context.Background(), filter)
-	return err
-}
-
-// Deletes implements repository.RoomRepository.
-func (port *roomMongoDB) Deletes(roomIdList []primitive.ObjectID) error {
-	filter := bson.M{"_id": bson.M{"$in": roomIdList}}
-	_, err := port.getCollection().DeleteMany(context.Background(), filter)
-	return err
+// FindByRoomHash implements repository.RoomRepository.
+func (port *roomMongoDB) FindByRoomHash(roomHash string) (*domain.Room, error) {
+	filter := bson.M{"roomHash": roomHash}
+	return port.findOne(filter)
 }
 
 // FindById implements repository.RoomRepository.
@@ -91,6 +83,20 @@ func (port *roomMongoDB) Update(room domain.Room) (*domain.Room, error) {
 	}
 
 	return &room, nil
+}
+
+// Delete implements repository.RoomRepository.
+func (port *roomMongoDB) Delete(roomId primitive.ObjectID) error {
+	filter := bson.M{"_id": roomId}
+	_, err := port.getCollection().DeleteOne(context.Background(), filter)
+	return err
+}
+
+// Deletes implements repository.RoomRepository.
+func (port *roomMongoDB) Deletes(roomIdList []primitive.ObjectID) error {
+	filter := bson.M{"_id": bson.M{"$in": roomIdList}}
+	_, err := port.getCollection().DeleteMany(context.Background(), filter)
+	return err
 }
 
 // private

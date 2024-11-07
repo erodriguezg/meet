@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"encoding/base64"
+	"encoding/hex"
 )
 
 func BCryptHash(seed string) (string, error) {
@@ -34,4 +35,15 @@ func SHA256HashB64UrlEncodingTruncated(data string) string {
 	truncatedHash := hash[:16] // Usa solo los primeros 16 bytes (128 bits)
 	base64URL := base64.URLEncoding.EncodeToString(truncatedHash)
 	return base64URL
+}
+
+func SHA256HexEncoding(data string) string {
+	sha256Hash := sha256.Sum256([]byte(data))
+	return hex.EncodeToString(sha256Hash[:])
+}
+
+func SHA256HexEncodingTruncated(data string) string {
+	hash := sha256.Sum256([]byte(data))
+	truncatedHash := hash[:16] // Usa solo los primeros 16 bytes (128 bits)
+	return hex.EncodeToString(truncatedHash)
 }
