@@ -1,8 +1,9 @@
 package domain
 
 const (
-	PermissionCodeRegisterModel = 1
-	PermissionCodeEditAllModels = 2
+	PermissionCodeManageSystem   = 1
+	PermissionCodeEditOwnProfile = 2
+	PermissionCodeCreateRoom     = 3
 )
 
 type Permission struct {

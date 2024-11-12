@@ -27,31 +27,31 @@ func NewRoomMongoDB(mongoDB *mongo.Database) repository.RoomRepository {
 // FindAll implements repository.RoomRepository.
 func (port *roomMongoDB) FindAll() ([]domain.Room, error) {
 	filter := bson.M{}
-	return port.findMany(filter)
+	return findMany[domain.Room](context.Background(), port.getCollection(), filter)
 }
 
 // FindByRoomHash implements repository.RoomRepository.
 func (port *roomMongoDB) FindByRoomHash(roomHash string) (*domain.Room, error) {
 	filter := bson.M{"roomHash": roomHash}
-	return port.findOne(filter)
+	return findOne[domain.Room](context.Background(), port.getCollection(), filter)
 }
 
 // FindById implements repository.RoomRepository.
 func (port *roomMongoDB) FindById(roomId primitive.ObjectID) (*domain.Room, error) {
 	filter := bson.M{"_id": roomId}
-	return port.findOne(filter)
+	return findOne[domain.Room](context.Background(), port.getCollection(), filter)
 }
 
 // FindByPersonId implements repository.RoomRepository.
 func (port *roomMongoDB) FindByOwnerPersonId(ownerPersonId primitive.ObjectID) ([]domain.Room, error) {
 	filter := bson.M{"ownerPersonId": ownerPersonId}
-	return port.findMany(filter)
+	return findMany[domain.Room](context.Background(), port.getCollection(), filter)
 }
 
 // FindsWithoutInteractionSince implements repository.RoomRepository.
 func (port *roomMongoDB) FindsWithoutInteractionSince(limitDate time.Time) ([]domain.Room, error) {
 	filter := bson.M{"lastInteractionDate": bson.M{"$lt": limitDate}}
-	return port.findMany(filter)
+	return findMany[domain.Room](context.Background(), port.getCollection(), filter)
 }
 
 // Persist implements repository.RoomRepository.
@@ -100,32 +100,6 @@ func (port *roomMongoDB) Deletes(roomIdList []primitive.ObjectID) error {
 }
 
 // private
-
-func (port *roomMongoDB) findOne(filter bson.M) (*domain.Room, error) {
-	var room domain.Room
-	err := port.getCollection().FindOne(context.Background(), filter).Decode(&room)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &room, nil
-}
-
-func (port *roomMongoDB) findMany(filter bson.M) ([]domain.Room, error) {
-	cursor, err := port.getCollection().Find(context.Background(), filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var rooms []domain.Room
-	err = cursor.All(context.Background(), &rooms)
-	if err != nil {
-		return nil, err
-	}
-	return rooms, nil
-}
 
 func (port *roomMongoDB) getCollection() *mongo.Collection {
 	return port.mongoDB.Collection(roomCollection)

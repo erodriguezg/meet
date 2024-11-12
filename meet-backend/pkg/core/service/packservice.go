@@ -605,7 +605,7 @@ func (port *domainPackService) getAccessLevelToPack(pack *domain.Pack, modelNick
 	}
 	if profile.PermissionsCodes != nil {
 		for _, permissionCode := range profile.PermissionsCodes {
-			if permissionCode == domain.PermissionCodeEditAllModels {
+			if permissionCode == domain.PermissionCodeManageSystem {
 				return PackAccessLevelEdit, nil
 			}
 		}

@@ -13,7 +13,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// interface
+
 type RoomService interface {
+	FindRoomByHash(roomHash string, personIdRequester *string) (dto.RoomDTO, error)
+
 	FindAllRooms() ([]dto.RoomDTO, error)
 
 	FindByOwnerPersonId(ownerPersonId string) ([]dto.RoomDTO, error)
@@ -43,6 +47,38 @@ func NewDomainRoomService(
 		roomRepository,
 		personService,
 	}
+}
+
+// Errors
+
+type RoomAccessDeniedError struct {
+	RoomHash string
+}
+
+func (e *RoomAccessDeniedError) Error() string {
+	return fmt.Sprintf("access denied to room with hash: %s", e.RoomHash)
+}
+
+// public implementation
+
+// FindRoomByHash implements RoomService.
+func (port *domainRoomService) FindRoomByHash(roomHash string, personIdRequester *string) (dto.RoomDTO, error) {
+
+	room, err := port.findRoomByHash(roomHash)
+	if err != nil {
+		return dto.RoomDTO{}, err
+	}
+
+	if personIdRequester == nil && !room.AnonymousAccess {
+		return dto.RoomDTO{}, &RoomAccessDeniedError{*room.RoomHash}
+	}
+
+	owner, err := port.findPerson(room.OwnerPersonId.Hex())
+	if err != nil {
+		return dto.RoomDTO{}, err
+	}
+
+	return port.roomToDTO(&room, &owner), nil
 }
 
 // ChangeRoomVisibility implements RoomService.
