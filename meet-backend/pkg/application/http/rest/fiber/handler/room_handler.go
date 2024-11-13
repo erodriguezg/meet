@@ -4,6 +4,7 @@ import (
 	"github.com/erodriguezg/meet/pkg/application/http/rest"
 	"github.com/erodriguezg/meet/pkg/application/http/security"
 	"github.com/erodriguezg/meet/pkg/core/domain"
+	"github.com/erodriguezg/meet/pkg/core/dto"
 	"github.com/erodriguezg/meet/pkg/core/service"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -90,18 +91,15 @@ func (port *roomFiberHandler) findRoomByHash(c *fiber.Ctx) error {
 // @Failure      500  {object}  error
 // @Router       /v1/room/all [get]
 func (port *roomFiberHandler) findAllRooms(c *fiber.Ctx) error {
-	err := port.securityService.MustHavePermission(domain.PermissionCodeManageSystem, c)
+	_, err := port.securityService.MustHavePermission(domain.PermissionCodeManageSystem, c)
 	if err != nil {
 		return err
 	}
-
 	port.log.Debug("-> findAllRooms")
-
 	rooms, err := port.roomService.FindAllRooms()
 	if err != nil {
 		return err
 	}
-
 	return c.JSON(rest.ApiOkArray(rooms))
 }
 
@@ -117,7 +115,16 @@ func (port *roomFiberHandler) findAllRooms(c *fiber.Ctx) error {
 // @Failure      500  {object}  error
 // @Router       /v1/room/owned [get]
 func (port *roomFiberHandler) findOwnedRooms(c *fiber.Ctx) error {
-	return nil
+	identity, err := port.securityService.MustHavePermission(domain.PermissionCodeCreateRoom, c)
+	if err != nil {
+		return err
+	}
+	port.log.Debug("-> findOwnedRooms")
+	rooms, err := port.roomService.FindByOwnerPersonId(identity.PersonId)
+	if err != nil {
+		return err
+	}
+	return c.JSON(rest.ApiOkArray(rooms))
 }
 
 // ShowAccount godoc
@@ -126,13 +133,40 @@ func (port *roomFiberHandler) findOwnedRooms(c *fiber.Ctx) error {
 // @Tags         Room
 // @Accept       json
 // @Produce      json
+// @Param        data body dto.CreateRoomDTO true "Payload Data"
 // @Success      200  {object}  rest.ApiResponse[dto.RoomDTO]
 // @Failure      400  {object}  error
 // @Failure      404  {object}  error
 // @Failure      500  {object}  error
 // @Router       /v1/room/new [post]
 func (port *roomFiberHandler) createRoom(c *fiber.Ctx) error {
-	return nil
+	var payload dto.CreateRoomDTO
+	err := c.BodyParser((&payload))
+	if err != nil {
+		return err
+	}
+	port.log.Debug("-> createRoom", zap.Any("payload", payload))
+
+	identity, hasPermissionSys, err := port.securityService.HasPermission(domain.PermissionCodeManageSystem, c)
+	if err != nil {
+		return err
+	}
+	if identity == nil {
+		return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
+	}
+
+	if hasPermissionSys {
+		if !identity.HasPermission(domain.PermissionCodeCreateRoom) {
+			return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
+		}
+		payload.OwnerPersonId = identity.PersonId
+	}
+
+	roomDTO, err := port.roomService.CreateRoom(payload)
+	if err != nil {
+		return err
+	}
+	return c.JSON(rest.ApiOk(&roomDTO))
 }
 
 // ShowAccount godoc

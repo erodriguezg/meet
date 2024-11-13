@@ -169,7 +169,7 @@ func (port *packFiberHandler) prepareUploadForPackItem(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	port.log.Debug(".> prepareUploadForPackItem", zap.Any("payload", payload))
+	port.log.Debug("-> prepareUploadForPackItem", zap.Any("payload", payload))
 	uploadResources, err := port.packService.PrepareUploadForPackItem(payload.ModelNickName, payload.PackNumber, payload.TypeCode, payload.IsPublic)
 	if err != nil {
 		return err

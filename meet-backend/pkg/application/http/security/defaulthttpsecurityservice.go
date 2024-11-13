@@ -99,18 +99,36 @@ func (port *DefaultHttpSecurityService) GetIdentity(c *fiber.Ctx) (*fiberidentit
 	return identity, nil
 }
 
-func (port *DefaultHttpSecurityService) MustHavePermission(permissionCode int, c *fiber.Ctx) error {
+func (port *DefaultHttpSecurityService) MustHavePermission(permissionCode int, c *fiber.Ctx) (*fiberidentity.FiberIdentity, error) {
 	identity, err := port.fiberIdentityUtil.GetIdentity(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return identity.MustHavePermission(permissionCode)
+	return identity, identity.MustHavePermission(permissionCode)
 }
 
-func (port *DefaultHttpSecurityService) MustHaveProfile(profileCode int, c *fiber.Ctx) error {
+func (port *DefaultHttpSecurityService) MustHaveProfile(profileCode int, c *fiber.Ctx) (*fiberidentity.FiberIdentity, error) {
 	identity, err := port.fiberIdentityUtil.GetIdentity(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return identity.MustHaveProfile(profileCode)
+	return identity, identity.MustHaveProfile(profileCode)
+}
+
+// HasPermission implements HttpSecurityService.
+func (port *DefaultHttpSecurityService) HasPermission(permissionCode int, c *fiber.Ctx) (*fiberidentity.FiberIdentity, bool, error) {
+	identity, err := port.fiberIdentityUtil.GetIdentity(c)
+	if err != nil {
+		return nil, false, err
+	}
+	return identity, identity.HasPermission(permissionCode), nil
+}
+
+// HasProfile implements HttpSecurityService.
+func (port *DefaultHttpSecurityService) HasProfile(profileCode int, c *fiber.Ctx) (*fiberidentity.FiberIdentity, bool, error) {
+	identity, err := port.fiberIdentityUtil.GetIdentity(c)
+	if err != nil {
+		return nil, false, err
+	}
+	return identity, identity.HasProfile(profileCode), nil
 }

@@ -20,22 +20,6 @@ type FiberIdentity struct {
 	PermissionsCodes []int  `json:"permissionsCodes"`
 }
 
-func (port *FiberIdentity) MustHaveProfile(profileCode int) error {
-	if profileCode == port.ProfileCode {
-		return nil
-	}
-	return NewAccessDeniedError(fmt.Errorf("don't have profile: %d", profileCode))
-}
-
-func (port *FiberIdentity) MustHavePermission(permissionCode int) error {
-	for _, permission := range port.PermissionsCodes {
-		if permission == permissionCode {
-			return nil
-		}
-	}
-	return NewAccessDeniedError(fmt.Errorf("don't have permission: %d", permissionCode))
-}
-
 type FiberAccessDeniedError struct {
 	ErrorDetail error
 }
@@ -134,4 +118,33 @@ func (port *FiberIdentityUtil) GetIdentity(c *fiber.Ctx) (*FiberIdentity, error)
 	}
 
 	return &identity, nil
+}
+
+func (port *FiberIdentity) MustHaveProfile(profileCode int) error {
+	if profileCode == port.ProfileCode {
+		return nil
+	}
+	return NewAccessDeniedError(fmt.Errorf("don't have profile: %d", profileCode))
+}
+
+func (port *FiberIdentity) MustHavePermission(permissionCode int) error {
+	for _, permission := range port.PermissionsCodes {
+		if permission == permissionCode {
+			return nil
+		}
+	}
+	return NewAccessDeniedError(fmt.Errorf("don't have permission: %d", permissionCode))
+}
+
+func (port *FiberIdentity) HasProfile(profileCode int) bool {
+	return profileCode == port.ProfileCode
+}
+
+func (port *FiberIdentity) HasPermission(permissionCode int) bool {
+	for _, permission := range port.PermissionsCodes {
+		if permission == permissionCode {
+			return true
+		}
+	}
+	return false
 }
