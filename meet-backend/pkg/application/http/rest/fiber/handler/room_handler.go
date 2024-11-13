@@ -155,7 +155,7 @@ func (port *roomFiberHandler) createRoom(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
 	}
 
-	if hasPermissionSys {
+	if !hasPermissionSys {
 		if !identity.HasPermission(domain.PermissionCodeCreateRoom) {
 			return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
 		}
@@ -175,19 +175,110 @@ func (port *roomFiberHandler) createRoom(c *fiber.Ctx) error {
 // @Tags         Room
 // @Accept       json
 // @Produce      json
+// @Param        data body dto.ChangeRoomVisibilityRoomDTO true "Payload Data"
 // @Success      200  {object}  rest.ApiResponse[dto.RoomDTO]
 // @Failure      400  {object}  error
 // @Failure      404  {object}  error
 // @Failure      500  {object}  error
 // @Router       /v1/room/visibility [post]
 func (port *roomFiberHandler) changeVisibilityRoom(c *fiber.Ctx) error {
-	return nil
+	var payload dto.ChangeRoomVisibilityRoomDTO
+	err := c.BodyParser((&payload))
+	if err != nil {
+		return err
+	}
+	port.log.Debug("-> changeVisibilityRoom", zap.Any("payload", payload))
+
+	identity, hasPermissionSys, err := port.securityService.HasPermission(domain.PermissionCodeManageSystem, c)
+	if err != nil {
+		return err
+	}
+	if identity == nil {
+		return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
+	}
+
+	var roomDTO dto.RoomDTO
+	if !hasPermissionSys {
+		if !identity.HasPermission(domain.PermissionCodeCreateRoom) {
+			return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
+		}
+
+		roomDTO, err = port.roomService.ChangeRoomVisibilityOwnRoom(payload, identity.PersonId)
+	} else {
+		roomDTO, err = port.roomService.ChangeRoomVisibility(payload)
+	}
+
+	if err != nil {
+		return err
+	}
+	return c.JSON(rest.ApiOk(&roomDTO))
 }
 
+// ShowAccount godoc
+// @Summary      Delete Room
+// @Description  Delete room
+// @Tags         Room
+// @Accept       json
+// @Produce      json
+// @Param        hash   path     string  true  "hash of room"
+// @Success      200  {object}  rest.ApiResponse[string]
+// @Failure      400  {object}  error
+// @Failure      404  {object}  error
+// @Failure      500  {object}  error
+// @Router       /v1/room/{hash} [delete]
 func (port *roomFiberHandler) deleteRoom(c *fiber.Ctx) error {
-	return nil
+	roomHash := c.Params("hash")
+
+	port.log.Debug("-> deleteRoom", zap.Any("roomHash", roomHash))
+
+	identity, hasPermissionSys, err := port.securityService.HasPermission(domain.PermissionCodeManageSystem, c)
+	if err != nil {
+		return err
+	}
+	if identity == nil {
+		return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
+	}
+
+	if !hasPermissionSys {
+		if !identity.HasPermission(domain.PermissionCodeCreateRoom) {
+			return c.Status(fiber.StatusUnauthorized).SendString("unauthorized")
+		}
+
+		err = port.roomService.DeleteOwnRoom(roomHash, identity.PersonId)
+	} else {
+		err = port.roomService.DeleteRoom(roomHash)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	okString := "ok"
+	return c.JSON(rest.ApiOk(&okString))
 }
 
+// ShowAccount godoc
+// @Summary      Delete Expired Rooms
+// @Description  Delete expired rooms
+// @Tags         Room
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  rest.ApiResponse[string]
+// @Failure      400  {object}  error
+// @Failure      404  {object}  error
+// @Failure      500  {object}  error
+// @Router       /v1/room/expired [delete]
 func (port *roomFiberHandler) deleteExpiredRooms(c *fiber.Ctx) error {
-	return nil
+
+	_, err := port.securityService.MustHavePermission(domain.PermissionCodeManageSystem, c)
+	if err != nil {
+		return err
+	}
+
+	err = port.roomService.DeleteAllExpiredRooms()
+	if err != nil {
+		return err
+	}
+	okString := "ok"
+	return c.JSON(rest.ApiOk(&okString))
 }
