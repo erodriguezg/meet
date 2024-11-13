@@ -79,7 +79,8 @@ func configFiberMiddlewares() {
 func configFiberHandlers(v1 *fiber.Router) {
 
 	panicIfAnyNil(personService, httpSecurityService, profileService, modelService,
-		fileService, packService, buyPackService, chiliBankService, packPaymentMethodService, log)
+		fileService, packService, buyPackService, chiliBankService, packPaymentMethodService,
+		roomService, log)
 
 	v1Handlers := [...]handler.FiberHandler{
 		handler.NewHealthCheckHandler(log),
@@ -89,6 +90,7 @@ func configFiberHandlers(v1 *fiber.Router) {
 		handler.NewFileFiberHandler(fileService, httpSecurityService, log),
 		handler.NewPackFiberHandler(packService, httpSecurityService, validate, log),
 		handler.NewBuyPackHandler(buyPackService, httpSecurityService, log),
+		handler.NewRoomFiberHandler(roomService, httpSecurityService, log),
 	}
 	for _, fHandler := range v1Handlers {
 		fHandler.RegisterRoutes(v1)

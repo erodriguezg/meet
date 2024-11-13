@@ -20,6 +20,7 @@ var (
 	paymentOrderRepository      repository.PaymentOrderRepository
 	chiliBankRepository         repository.ChiliBankAccountRepository
 	packPaymentMethodRepository repository.PackPaymentMethodRepository
+	roomRepository              repository.RoomRepository
 )
 
 func configRepositories() {
@@ -34,6 +35,7 @@ func configRepositories() {
 	paymentOrderRepository = configPaymentOrderRepository()
 	chiliBankRepository = configChiliBankRepository()
 	packPaymentMethodRepository = configPackPaymentMethodRepository()
+	roomRepository = configRoomRepository()
 }
 
 func configPersonRepository() repository.PersonRepository {
@@ -122,4 +124,9 @@ func configChiliBankRepository() repository.ChiliBankAccountRepository {
 func configPackPaymentMethodRepository() repository.PackPaymentMethodRepository {
 	panicIfAnyNil(mongoDB)
 	return mongodb.NewPackPaymentMethodRepository(mongoDB)
+}
+
+func configRoomRepository() repository.RoomRepository {
+	panicIfAnyNil(mongoDB)
+	return mongodb.NewRoomMongoDB(mongoDB)
 }

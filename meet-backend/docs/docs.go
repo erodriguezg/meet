@@ -194,41 +194,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/chili-bank/account-types": {
-            "get": {
-                "description": "Get accounts types for chili banks",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Chili Bank"
-                ],
-                "summary": "Get Account Types",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-array_string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
         "/v1/chili-bank/banks": {
             "get": {
                 "description": "Get Chili Banks",
@@ -265,48 +230,6 @@ const docTemplate = `{
             }
         },
         "/v1/chili-bank/{modelNickname}/accounts": {
-            "get": {
-                "description": "Get Model Chili Banks Accounts",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Chili Bank"
-                ],
-                "summary": "Get Model Accounts",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "model nickname",
-                        "name": "modelNickname",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-array_dto_ChiliBankAccountDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            },
             "post": {
                 "description": "Insert or update a chili bank account for the model",
                 "consumes": [
@@ -604,300 +527,6 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "boolean"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
-        "/v1/model/register": {
-            "post": {
-                "description": "Register a Model",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Model"
-                ],
-                "summary": "Register Model",
-                "parameters": [
-                    {
-                        "description": "The registration data",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.ModelRegisterDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
-        "/v1/model/search": {
-            "post": {
-                "description": "Search Models by filters",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Model"
-                ],
-                "summary": "Search Models",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "first position page",
-                        "name": "first",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "last position page",
-                        "name": "last",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "filters for search",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.FilterSearchModel"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-domain_SearchModelResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
-        "/v1/model/{nickname}": {
-            "get": {
-                "description": "Find a model by nickname and get public data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Model"
-                ],
-                "summary": "Find Model By NickName",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "nickname of the model",
-                        "name": "nickname",
-                        "in": "path"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-domain_Model"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
-        "/v1/model/{nickname}/prepare-profile-img": {
-            "post": {
-                "description": "Prepare for upload profile image",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Model"
-                ],
-                "summary": "Prepare Upload Profile Image",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "nickname of the model",
-                        "name": "nickname",
-                        "in": "path"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-array_dto_ResourceUploadUrlDto"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            }
-        },
-        "/v1/pack-payment-methods/{modelNickname}/{packNumber}": {
-            "get": {
-                "description": "Gets the payments methods for one pack",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Pack Payment Methods"
-                ],
-                "summary": "Gets Pack Payment Methods",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "model nickname",
-                        "name": "modelNickname",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "pack number",
-                        "name": "packNumber",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-dto_PackPaymentMethodDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {}
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
-                    }
-                }
-            },
-            "post": {
-                "description": "Insert or update the payment methods for one pack",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Pack Payment Methods"
-                ],
-                "summary": "Save Pack Payment Methods",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "model nickname",
-                        "name": "modelNickname",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "The payment methods data",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.PackPaymentMethodDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ApiResponse-dto_PackPaymentMethodDTO"
                         }
                     },
                     "400": {
@@ -1699,6 +1328,289 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/room/all": {
+            "get": {
+                "description": "Find all rooms",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Room"
+                ],
+                "summary": "Find All Rooms",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApiResponse-array_dto_RoomDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/v1/room/expired": {
+            "delete": {
+                "description": "Delete expired rooms",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Room"
+                ],
+                "summary": "Delete Expired Rooms",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApiResponse-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/v1/room/new": {
+            "post": {
+                "description": "Create New Room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Room"
+                ],
+                "summary": "Create Room",
+                "parameters": [
+                    {
+                        "description": "Payload Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateRoomDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApiResponse-dto_RoomDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/v1/room/owned": {
+            "get": {
+                "description": "Find owned rooms (by identity)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Room"
+                ],
+                "summary": "Find Owned Rooms",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApiResponse-array_dto_RoomDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/v1/room/visibility": {
+            "post": {
+                "description": "Change visibility room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Room"
+                ],
+                "summary": "Change Visibility Room",
+                "parameters": [
+                    {
+                        "description": "Payload Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ChangeRoomVisibilityRoomDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApiResponse-dto_RoomDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/v1/room/{hash}": {
+            "get": {
+                "description": "Find one room by hash",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Room"
+                ],
+                "summary": "Find Room By Hash",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hash of room",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApiResponse-dto_RoomDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Room"
+                ],
+                "summary": "Delete Room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hash of room",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApiResponse-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/v1/security/identity": {
             "get": {
                 "description": "Get the authenticated identity",
@@ -1865,55 +1777,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.FilterSearchModel": {
-            "type": "object",
-            "properties": {
-                "cityName": {
-                    "type": "string"
-                },
-                "countryCode": {
-                    "type": "string"
-                },
-                "nickName": {
-                    "type": "string"
-                },
-                "zodiacSignCode": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.Model": {
-            "type": "object",
-            "properties": {
-                "aboutMe": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "countryCode": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "nickName": {
-                    "type": "string"
-                },
-                "personId": {
-                    "type": "string"
-                },
-                "profileImageFileHash": {
-                    "type": "string"
-                },
-                "profileImageThumbnailFileHash": {
-                    "type": "string"
-                },
-                "zodiacSignCode": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.Person": {
             "type": "object",
             "properties": {
@@ -1957,17 +1820,14 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.SearchModelResponse": {
+        "dto.ChangeRoomVisibilityRoomDTO": {
             "type": "object",
             "properties": {
-                "models": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Model"
-                    }
+                "newAnonymousAccess": {
+                    "type": "boolean"
                 },
-                "totalCount": {
-                    "type": "integer"
+                "roomHash": {
+                    "type": "string"
                 }
             }
         },
@@ -2007,13 +1867,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ModelRegisterDto": {
+        "dto.CreateRoomDTO": {
             "type": "object",
             "properties": {
-                "nickName": {
-                    "type": "string"
+                "anonymousAccess": {
+                    "type": "boolean"
                 },
-                "personId": {
+                "ownerPersonId": {
                     "type": "string"
                 }
             }
@@ -2080,50 +1940,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PackPaymentMethodDTO": {
-            "type": "object",
-            "required": [
-                "chiliBankReceiptCLPPrice",
-                "chiliBankReceiptMethodEnabled",
-                "paypalOnlineMethodEnabled",
-                "paypalOnlineUSDPrice",
-                "paypalReceiptMethodEnabled",
-                "paypalReceiptUSDPrice"
-            ],
-            "properties": {
-                "chiliBankReceiptAccountId": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "chiliBankReceiptCLPPrice": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "chiliBankReceiptMethodEnabled": {
-                    "type": "boolean"
-                },
-                "paypalOnlineMethodEnabled": {
-                    "type": "boolean"
-                },
-                "paypalOnlineRecipientEmail": {
-                    "type": "string"
-                },
-                "paypalOnlineUSDPrice": {
-                    "type": "number",
-                    "minimum": 1
-                },
-                "paypalReceiptMethodEnabled": {
-                    "type": "boolean"
-                },
-                "paypalReceiptRecipientEmail": {
-                    "type": "string"
-                },
-                "paypalReceiptUSDPrice": {
-                    "type": "number",
-                    "minimum": 1
-                }
-            }
-        },
         "dto.ResourceUploadUrlDto": {
             "type": "object",
             "properties": {
@@ -2141,7 +1957,27 @@ const docTemplate = `{
                 }
             }
         },
-        "fiberidentity.FiberIdentity": {
+        "dto.RoomDTO": {
+            "type": "object",
+            "properties": {
+                "anonymousAccess": {
+                    "type": "boolean"
+                },
+                "creationDate": {
+                    "type": "string"
+                },
+                "lastInteractionDate": {
+                    "type": "string"
+                },
+                "owner": {
+                    "$ref": "#/definitions/dto.RoomOwnerDTO"
+                },
+                "roomHash": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RoomOwnerDTO": {
             "type": "object",
             "properties": {
                 "email": {
@@ -2153,10 +1989,21 @@ const docTemplate = `{
                 "lastName": {
                     "type": "string"
                 },
-                "modelId": {
+                "personId": {
+                    "type": "string"
+                }
+            }
+        },
+        "fiberidentity.FiberIdentity": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 },
-                "modelNickName": {
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
                     "type": "string"
                 },
                 "permissionsCodes": {
@@ -2317,23 +2164,6 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.ApiResponse-array_dto_ChiliBankAccountDTO": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/rest.ApiErrorDetail"
-                },
-                "payload": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ChiliBankAccountDTO"
-                    }
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "rest.ApiResponse-array_dto_PackDto": {
             "type": "object",
             "properties": {
@@ -2402,6 +2232,23 @@ const docTemplate = `{
                 }
             }
         },
+        "rest.ApiResponse-array_dto_RoomDTO": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/rest.ApiErrorDetail"
+                },
+                "payload": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.RoomDTO"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "rest.ApiResponse-array_string": {
             "type": "object",
             "properties": {
@@ -2419,20 +2266,6 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.ApiResponse-domain_Model": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/rest.ApiErrorDetail"
-                },
-                "payload": {
-                    "$ref": "#/definitions/domain.Model"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "rest.ApiResponse-domain_Person": {
             "type": "object",
             "properties": {
@@ -2441,20 +2274,6 @@ const docTemplate = `{
                 },
                 "payload": {
                     "$ref": "#/definitions/domain.Person"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "rest.ApiResponse-domain_SearchModelResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/rest.ApiErrorDetail"
-                },
-                "payload": {
-                    "$ref": "#/definitions/domain.SearchModelResponse"
                 },
                 "status": {
                     "type": "string"
@@ -2489,14 +2308,14 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.ApiResponse-dto_PackPaymentMethodDTO": {
+        "rest.ApiResponse-dto_RoomDTO": {
             "type": "object",
             "properties": {
                 "error": {
                     "$ref": "#/definitions/rest.ApiErrorDetail"
                 },
                 "payload": {
-                    "$ref": "#/definitions/dto.PackPaymentMethodDTO"
+                    "$ref": "#/definitions/dto.RoomDTO"
                 },
                 "status": {
                     "type": "string"

@@ -1,37 +1,5 @@
 basePath: /api
 definitions:
-  domain.FilterSearchModel:
-    properties:
-      cityName:
-        type: string
-      countryCode:
-        type: string
-      nickName:
-        type: string
-      zodiacSignCode:
-        type: string
-    type: object
-  domain.Model:
-    properties:
-      aboutMe:
-        type: string
-      city:
-        type: string
-      countryCode:
-        type: string
-      id:
-        type: string
-      nickName:
-        type: string
-      personId:
-        type: string
-      profileImageFileHash:
-        type: string
-      profileImageThumbnailFileHash:
-        type: string
-      zodiacSignCode:
-        type: string
-    type: object
   domain.Person:
     properties:
       active:
@@ -60,14 +28,12 @@ definitions:
           type: integer
         type: array
     type: object
-  domain.SearchModelResponse:
+  dto.ChangeRoomVisibilityRoomDTO:
     properties:
-      models:
-        items:
-          $ref: '#/definitions/domain.Model'
-        type: array
-      totalCount:
-        type: integer
+      newAnonymousAccess:
+        type: boolean
+      roomHash:
+        type: string
     type: object
   dto.ChiliBankAccountDTO:
     properties:
@@ -96,11 +62,11 @@ definitions:
     - holderName
     - rut
     type: object
-  dto.ModelRegisterDto:
+  dto.CreateRoomDTO:
     properties:
-      nickName:
-        type: string
-      personId:
+      anonymousAccess:
+        type: boolean
+      ownerPersonId:
         type: string
     type: object
   dto.PackBuyDetailDto:
@@ -143,38 +109,6 @@ definitions:
       typeCode:
         type: string
     type: object
-  dto.PackPaymentMethodDTO:
-    properties:
-      chiliBankReceiptAccountId:
-        maxLength: 255
-        type: string
-      chiliBankReceiptCLPPrice:
-        minimum: 1
-        type: integer
-      chiliBankReceiptMethodEnabled:
-        type: boolean
-      paypalOnlineMethodEnabled:
-        type: boolean
-      paypalOnlineRecipientEmail:
-        type: string
-      paypalOnlineUSDPrice:
-        minimum: 1
-        type: number
-      paypalReceiptMethodEnabled:
-        type: boolean
-      paypalReceiptRecipientEmail:
-        type: string
-      paypalReceiptUSDPrice:
-        minimum: 1
-        type: number
-    required:
-    - chiliBankReceiptCLPPrice
-    - chiliBankReceiptMethodEnabled
-    - paypalOnlineMethodEnabled
-    - paypalOnlineUSDPrice
-    - paypalReceiptMethodEnabled
-    - paypalReceiptUSDPrice
-    type: object
   dto.ResourceUploadUrlDto:
     properties:
       fileHash:
@@ -186,7 +120,20 @@ definitions:
       uploadUrl:
         type: string
     type: object
-  fiberidentity.FiberIdentity:
+  dto.RoomDTO:
+    properties:
+      anonymousAccess:
+        type: boolean
+      creationDate:
+        type: string
+      lastInteractionDate:
+        type: string
+      owner:
+        $ref: '#/definitions/dto.RoomOwnerDTO'
+      roomHash:
+        type: string
+    type: object
+  dto.RoomOwnerDTO:
     properties:
       email:
         type: string
@@ -194,9 +141,16 @@ definitions:
         type: string
       lastName:
         type: string
-      modelId:
+      personId:
         type: string
-      modelNickName:
+    type: object
+  fiberidentity.FiberIdentity:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
         type: string
       permissionsCodes:
         items:
@@ -300,17 +254,6 @@ definitions:
       status:
         type: string
     type: object
-  rest.ApiResponse-array_dto_ChiliBankAccountDTO:
-    properties:
-      error:
-        $ref: '#/definitions/rest.ApiErrorDetail'
-      payload:
-        items:
-          $ref: '#/definitions/dto.ChiliBankAccountDTO'
-        type: array
-      status:
-        type: string
-    type: object
   rest.ApiResponse-array_dto_PackDto:
     properties:
       error:
@@ -355,6 +298,17 @@ definitions:
       status:
         type: string
     type: object
+  rest.ApiResponse-array_dto_RoomDTO:
+    properties:
+      error:
+        $ref: '#/definitions/rest.ApiErrorDetail'
+      payload:
+        items:
+          $ref: '#/definitions/dto.RoomDTO'
+        type: array
+      status:
+        type: string
+    type: object
   rest.ApiResponse-array_string:
     properties:
       error:
@@ -366,30 +320,12 @@ definitions:
       status:
         type: string
     type: object
-  rest.ApiResponse-domain_Model:
-    properties:
-      error:
-        $ref: '#/definitions/rest.ApiErrorDetail'
-      payload:
-        $ref: '#/definitions/domain.Model'
-      status:
-        type: string
-    type: object
   rest.ApiResponse-domain_Person:
     properties:
       error:
         $ref: '#/definitions/rest.ApiErrorDetail'
       payload:
         $ref: '#/definitions/domain.Person'
-      status:
-        type: string
-    type: object
-  rest.ApiResponse-domain_SearchModelResponse:
-    properties:
-      error:
-        $ref: '#/definitions/rest.ApiErrorDetail'
-      payload:
-        $ref: '#/definitions/domain.SearchModelResponse'
       status:
         type: string
     type: object
@@ -411,12 +347,12 @@ definitions:
       status:
         type: string
     type: object
-  rest.ApiResponse-dto_PackPaymentMethodDTO:
+  rest.ApiResponse-dto_RoomDTO:
     properties:
       error:
         $ref: '#/definitions/rest.ApiErrorDetail'
       payload:
-        $ref: '#/definitions/dto.PackPaymentMethodDTO'
+        $ref: '#/definitions/dto.RoomDTO'
       status:
         type: string
     type: object
@@ -608,35 +544,6 @@ paths:
       tags:
       - Chili Bank
   /v1/chili-bank/{modelNickname}/accounts:
-    get:
-      consumes:
-      - application/json
-      description: Get Model Chili Banks Accounts
-      parameters:
-      - description: model nickname
-        in: path
-        name: modelNickname
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-array_dto_ChiliBankAccountDTO'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Get Model Accounts
-      tags:
-      - Chili Bank
     post:
       consumes:
       - application/json
@@ -670,30 +577,6 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Save Model Account
-      tags:
-      - Chili Bank
-  /v1/chili-bank/account-types:
-    get:
-      consumes:
-      - application/json
-      description: Get accounts types for chili banks
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-array_string'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Get Account Types
       tags:
       - Chili Bank
   /v1/chili-bank/banks:
@@ -858,206 +741,6 @@ paths:
       summary: Health Check
       tags:
       - Health Check
-  /v1/model/{nickname}:
-    get:
-      consumes:
-      - application/json
-      description: Find a model by nickname and get public data
-      parameters:
-      - description: nickname of the model
-        in: path
-        name: nickname
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-domain_Model'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Find Model By NickName
-      tags:
-      - Model
-  /v1/model/{nickname}/prepare-profile-img:
-    post:
-      consumes:
-      - application/json
-      description: Prepare for upload profile image
-      parameters:
-      - description: nickname of the model
-        in: path
-        name: nickname
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-array_dto_ResourceUploadUrlDto'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Prepare Upload Profile Image
-      tags:
-      - Model
-  /v1/model/register:
-    post:
-      consumes:
-      - application/json
-      description: Register a Model
-      parameters:
-      - description: The registration data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ModelRegisterDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-string'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Register Model
-      tags:
-      - Model
-  /v1/model/search:
-    post:
-      consumes:
-      - application/json
-      description: Search Models by filters
-      parameters:
-      - description: first position page
-        in: query
-        name: first
-        required: true
-        type: string
-      - description: last position page
-        in: query
-        name: last
-        required: true
-        type: string
-      - description: filters for search
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/domain.FilterSearchModel'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-domain_SearchModelResponse'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Search Models
-      tags:
-      - Model
-  /v1/pack-payment-methods/{modelNickname}/{packNumber}:
-    get:
-      consumes:
-      - application/json
-      description: Gets the payments methods for one pack
-      parameters:
-      - description: model nickname
-        in: path
-        name: modelNickname
-        required: true
-        type: string
-      - description: pack number
-        in: path
-        name: packNumber
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-dto_PackPaymentMethodDTO'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Gets Pack Payment Methods
-      tags:
-      - Pack Payment Methods
-    post:
-      consumes:
-      - application/json
-      description: Insert or update the payment methods for one pack
-      parameters:
-      - description: model nickname
-        in: path
-        name: modelNickname
-        required: true
-        type: string
-      - description: The payment methods data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/dto.PackPaymentMethodDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.ApiResponse-dto_PackPaymentMethodDTO'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-        "500":
-          description: Internal Server Error
-          schema: {}
-      summary: Save Pack Payment Methods
-      tags:
-      - Pack Payment Methods
   /v1/pack/{modelNickName}:
     get:
       consumes:
@@ -1591,6 +1274,199 @@ paths:
       summary: Find All Profiles
       tags:
       - Profile
+  /v1/room/{hash}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete room
+      parameters:
+      - description: hash of room
+        in: path
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete Room
+      tags:
+      - Room
+    get:
+      consumes:
+      - application/json
+      description: Find one room by hash
+      parameters:
+      - description: hash of room
+        in: path
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-dto_RoomDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Find Room By Hash
+      tags:
+      - Room
+  /v1/room/all:
+    get:
+      consumes:
+      - application/json
+      description: Find all rooms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_RoomDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Find All Rooms
+      tags:
+      - Room
+  /v1/room/expired:
+    delete:
+      consumes:
+      - application/json
+      description: Delete expired rooms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-string'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete Expired Rooms
+      tags:
+      - Room
+  /v1/room/new:
+    post:
+      consumes:
+      - application/json
+      description: Create New Room
+      parameters:
+      - description: Payload Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateRoomDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-dto_RoomDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create Room
+      tags:
+      - Room
+  /v1/room/owned:
+    get:
+      consumes:
+      - application/json
+      description: Find owned rooms (by identity)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-array_dto_RoomDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Find Owned Rooms
+      tags:
+      - Room
+  /v1/room/visibility:
+    post:
+      consumes:
+      - application/json
+      description: Change visibility room
+      parameters:
+      - description: Payload Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangeRoomVisibilityRoomDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApiResponse-dto_RoomDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Change Visibility Room
+      tags:
+      - Room
   /v1/security/identity:
     get:
       consumes:

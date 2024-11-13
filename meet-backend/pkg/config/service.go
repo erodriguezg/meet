@@ -20,6 +20,7 @@ var (
 	buyPackService           service.BuyPackService
 	chiliBankService         service.ChiliBankAccountService
 	packPaymentMethodService service.PackPaymentMethodService
+	roomService              service.RoomService
 )
 
 func configServices() {
@@ -35,6 +36,7 @@ func configServices() {
 	buyPackService = configBuyPackService()
 	chiliBankService = configChileBankService()
 	packPaymentMethodService = configPackPaymentMethodService()
+	roomService = configRoomService()
 }
 
 func configOpenIdService() openid.OpenIdService {
@@ -112,4 +114,9 @@ func configChileBankService() service.ChiliBankAccountService {
 func configPackPaymentMethodService() service.PackPaymentMethodService {
 	panicIfAnyNil(packService, packPaymentMethodRepository)
 	return service.NewPackPaymentMethodService(packService, packPaymentMethodRepository)
+}
+
+func configRoomService() service.RoomService {
+	panicIfAnyNil(roomRepository, personRepository)
+	return service.NewDomainRoomService(roomRepository, personService)
 }
