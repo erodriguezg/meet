@@ -366,7 +366,6 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: row;
   width: 100%;
-  max-width: 1200px;
   border: 1px solid #ddd;
   margin: 1rem auto;
   max-height: 100vh;
@@ -379,6 +378,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   border-right: 1px solid #ddd;
   padding: 10px;
+  max-width: 300px;
 }
 
 .messages-box {
@@ -452,7 +452,7 @@ onBeforeUnmount(() => {
 
 .video-box {
   width: 100%;
-  max-height: 400px;
+  max-height: 85vh;
   border: 1px solid #ddd;
   background-color: black;
 }
